@@ -17,8 +17,11 @@ forecast.bats<-function(object, h=10, level=c(80,95), fan=FALSE, ts.frequency=ma
 	#}
 	x<-matrix(0,nrow=nrow(object$x), ncol=h)
 	y.forecast<-numeric(h)
-	w<-makeWMatrix(small.phi=object$damping.parameter, seasonal.periods=object$seasonal.periods, ar.coefs=object$ar.coefficients, ma.coefs=object$ma.coefficients)
-	g<-makeGMatrix(alpha=object$alpha, beta=object$beta, gamma.vector=object$gamma.values, seasonal.periods=object$seasonal.periods, p=length(object$ar.coefficients), q=length(object$ma.coefficients))
+	#w<-makeWMatrix(small.phi=object$damping.parameter, seasonal.periods=object$seasonal.periods, ar.coefs=object$ar.coefficients, ma.coefs=object$ma.coefficients)
+	w<-.Call("makeBATSWMatrix", smallPhi_s = object$damping.parameter, sPeriods_s = object$seasonal.periods, arCoefs_s = object$ar.coefficients, maCoefs_s = object$ma.coefficients, PACKAGE = "forecast")
+	#g<-makeGMatrix(alpha=object$alpha, beta=object$beta, gamma.vector=object$gamma.values, seasonal.periods=object$seasonal.periods, p=length(object$ar.coefficients), q=length(object$ma.coefficients))
+	g<-.Call("makeBATSGMatrix", object$alpha, object$beta, object$gamma.values, object$seasonal.periods, length(object$ar.coefficients), length(object$ma.coefficients), PACKAGE="forecast")
+	
 	F<-makeFMatrix(alpha=object$alpha, beta=object$beta, small.phi=object$damping.parameter, seasonal.periods=object$seasonal.periods, gamma.bold.matrix=g$gamma.bold.matrix, ar.coefs=object$ar.coefficients, ma.coefs=object$ma.coefficients)
 	
 	y.forecast[1]<-w$w.transpose %*% object$x[,ncol(object$x)]

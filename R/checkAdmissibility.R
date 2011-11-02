@@ -3,7 +3,7 @@
 # Author: srazbash
 ###############################################################################
 checkEigenValues<-function(eigen.values) {
-	abs.eigen.values<-round(abs(eigen.values), digits=14)
+	abs.eigen.values<-round(abs(eigen.values), digits=2)
 	
 	if(all((abs.eigen.values < 1))) {
 		return(TRUE)
@@ -81,6 +81,7 @@ checkAdmissibility<-function(D, box.cox=NULL, small.phi=NULL, ar.coefs=NULL, ma.
 	
 	#Check the eigen values of the D matrix
 	D.eigen.values<-eigen(D, only.values=TRUE)$values
+	#print(D.eigen.values)
 	#a<<-D.eigen.values
 	#DD<<-D
 	#print(D.eigen.values)

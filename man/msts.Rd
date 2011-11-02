@@ -14,7 +14,7 @@
 \item{...}{Arguements to be passed to the underlying call to \code{ts()}. For example \code{start=c(1987,5)}.}
 }
 
-\value{An object of class \code{c("msts", "ts")} }.
+\value{An object of class \code{c("msts", "ts")}.}
 
 \author{Rob J Hyndman and Slava Razbash}
 
