@@ -13,7 +13,8 @@ checkAdmissibility<-function(D, box.cox=NULL, small.phi=NULL, ar.coefs=NULL, ma.
 	
 	#Check the range of small.phi
 	if(!is.null(small.phi)) {
-		if(((small.phi < .8) | (small.phi > .98)) & (small.phi != 1)) {
+		#if(((small.phi < .8) | (small.phi > .98)) & (small.phi != 1)) {
+		if(((small.phi < .7) | (small.phi > 1))) {
 			return(FALSE)
 		}
 	}
@@ -60,7 +61,7 @@ checkAdmissibility<-function(D, box.cox=NULL, small.phi=NULL, ar.coefs=NULL, ma.
 	#Check the eigen values of the D matrix
 	D.eigen.values<-eigen(D, only.values=TRUE)$values
 	
-	return(all(D.eigen.values < 1+1e-10))
+	return(all(abs(D.eigen.values) < 1+1e-10))
 	
 	
 }

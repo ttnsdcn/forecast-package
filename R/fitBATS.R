@@ -20,12 +20,12 @@ fitSpecificBATS<-function(y, use.box.cox, use.beta, use.damping, seasonal.period
 			q<-0
 		}
 		#Calculate starting values:
-		alpha<-.1
+		alpha<-(1e-6)
 		if(use.beta) {
-			beta.v<-.02
+			beta.v<-(5e-7)
 			b<-0
 			if(use.damping) {
-				small.phi<-.97
+				small.phi<-.99
 			} else {
 				small.phi<-1
 			}
