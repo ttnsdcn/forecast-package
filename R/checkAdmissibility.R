@@ -2,28 +2,6 @@
 # 
 # Author: srazbash
 ###############################################################################
-checkEigenValues<-function(eigen.values) {
-	abs.eigen.values<-round(abs(eigen.values), digits=2)
-	
-	if(all((abs.eigen.values < 1))) {
-		return(TRUE)
-	} else if(all((abs.eigen.values <= 1))) {
-		#print("stage one")
-		if(!all((abs.eigen.values == 1))) {
-			#print("stage two:")
-			#print(abs.eigen.values)
-			return(TRUE)
-		} else {
-			#print("Eigen D-2:")
-			#print(abs.eigen.values)
-			return(FALSE)
-		}
-	} else {
-		#print("Eigen D:")
-		#print(abs.eigen.values)
-		return(FALSE)
-	}
-}
 
 checkAdmissibility<-function(D, box.cox=NULL, small.phi=NULL, ar.coefs=NULL, ma.coefs=NULL) {
 	#Check the range of the Box-Cox parameter
@@ -81,11 +59,8 @@ checkAdmissibility<-function(D, box.cox=NULL, small.phi=NULL, ar.coefs=NULL, ma.
 	
 	#Check the eigen values of the D matrix
 	D.eigen.values<-eigen(D, only.values=TRUE)$values
-	#print(D.eigen.values)
-	#a<<-D.eigen.values
-	#DD<<-D
-	#print(D.eigen.values)
-	answer<-checkEigenValues(D.eigen.values)
-	#print(answer)
-	return(answer)
+	
+	return(all(D.eigen.values < 1+1e-10))
+	
+	
 }
