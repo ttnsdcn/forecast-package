@@ -8,6 +8,7 @@ Date: 2011-10-27
 Depends: R (>= 2.0.0), graphics, stats, tseries, fracdiff, zoo, Rcpp (>= 0.9.7), RcppArmadillo (>= 0.2.29)
 LinkingTo: Rcpp, RcppArmadillo
 LazyData: yes
+ByteCompile: TRUE
 Author: Rob J Hyndman <Rob.Hyndman@monash.edu>
 Maintainer: Rob J Hyndman <Rob.Hyndman@monash.edu>
 License: GPL (>= 2)
