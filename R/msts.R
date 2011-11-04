@@ -1,7 +1,11 @@
 # TODO: Add comment
 
 msts<-function(data, seasonal.periods, ts.frequency=floor(max(seasonal.periods)), ...) {
+	tsp.data<-tsp(data)	
 	object<-ts(data=data, frequency=ts.frequency, ...)
+	if(!is.null(tsp.data)) {
+		tsp(object)<-tsp.data	
+	}
 	class(object)<-c("msts", "ts")
 	attr(object, "msts")<-seasonal.periods
 	return(object)

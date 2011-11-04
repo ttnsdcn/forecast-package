@@ -15,7 +15,8 @@ dshw <- function(y, period1=NULL, period2=NULL, h=2*max(period1,period2), alpha=
 		  tmp <- period2
 		  period2 <- period1
 		  period1 <- tmp
-	  }	  
+	  }
+	  y<-msts(y, c(period1, period2))
   }
 	
   if(!armethod)
@@ -86,7 +87,9 @@ dshw <- function(y, period1=NULL, period2=NULL, h=2*max(period1,period2), alpha=
   # Calculate MSE and MAPE
   yhat <- ts(yhat)
   tsp(yhat) <- tsp(y)
+  yhat<-msts(yhat, c(period1, period2))
   e <- y - yhat
+  e<-msts(e, c(period1, period2))
   if(armethod)
 	{
 		yhat <- yhat + phi * c(0,e[-n])
@@ -104,24 +107,9 @@ dshw <- function(y, period1=NULL, period2=NULL, h=2*max(period1,period2), alpha=
   } else {
 	  end.y[2]<-end.y[2]+1
   }
-  fcast<-msts(data=fcast, seasonal.periods=c(period1, period2), start=end.y)
-  names(fcast)<-c((length(y)+1):(length(y)+length(fcast)))
-  #fcast <- ts(fcast,f=frequency(y),s=tsp(y)[2]+1/tsp(y)[3])
- # if(any(class(y)== "ts")) {
-#	y.ts<-as.numeric(y)
-#	y.ts[(length(y.ts)+1)]<-0
-#	y.ts<-ts(y, frequency=frequency(y), start=start(y))
-#	fcast.start.time<-end(y.ts) 
- #   fcast<-msts(data=fcast, seasonal.periods=c(period1, period2), ts.frequency=frequency(y), start=fcast.start.time)
- # } else {
-#	y.ts<-as.numeric(y)
-#	y.ts[(length(y.ts)+1)]<-0
-#	y.ts<-ts(y.ts, frequency=period2)
-#	fcast.start.time<-end(y.ts)
-#	fcast<-msts(data=fcast, seasonal.periods=c(period1, period2), start=fcast.start.time)
-	#fcast<-msts(data=fcast, seasonal.periods=c(period1, period2))
- # }
-
+  
+  fcast <- ts(fcast,f=frequency(y),s=tsp(y)[2]+1/tsp(y)[3])
+  fcast<-msts(fcast, c(period1, period2))
   
   if(!is.null(lambda))
   {
