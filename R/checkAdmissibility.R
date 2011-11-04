@@ -3,7 +3,7 @@
 # Author: srazbash
 ###############################################################################
 
-checkAdmissibility<-function(D, box.cox=NULL, small.phi=NULL, ar.coefs=NULL, ma.coefs=NULL) {
+checkAdmissibility<-function(D, box.cox=NULL, small.phi=NULL, ar.coefs=NULL, ma.coefs=NULL, tau=0) {
 	#Check the range of the Box-Cox parameter
 	if(!is.null(box.cox)) {
 		if((box.cox < 0) | (box.cox > 1.5)) {
@@ -13,9 +13,14 @@ checkAdmissibility<-function(D, box.cox=NULL, small.phi=NULL, ar.coefs=NULL, ma.
 	
 	#Check the range of small.phi
 	if(!is.null(small.phi)) {
-		#if(((small.phi < .8) | (small.phi > .98)) & (small.phi != 1)) {
-		if(((small.phi < .7) | (small.phi > 1))) {
-			return(FALSE)
+		if(tau > 16) {
+			if(((small.phi < .8) | (small.phi > 1))) {
+				return(FALSE)
+			}
+		} else {
+			if(((small.phi < .8) | (small.phi > .98)) & (small.phi != 1)) {
+				return(FALSE)
+			}
 		}
 	}
 	

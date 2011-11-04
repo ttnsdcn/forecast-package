@@ -20,12 +20,24 @@ fitSpecificBATS<-function(y, use.box.cox, use.beta, use.damping, seasonal.period
 			q<-0
 		}
 		#Calculate starting values:
-		alpha<-(1e-6)
+		if(sum(seasonal.periods) > 16) {
+			alpha<-(1e-6)
+		} else {
+			alpha<-.01
+		}
 		if(use.beta) {
-			beta.v<-(5e-7)
+			if(sum(seasonal.periods) > 16) {
+				beta.v<-(5e-7)
+			} else {
+				beta.v<-.02
+			}
 			b<-0
 			if(use.damping) {
-				small.phi<-.99
+				if(sum(seasonal.periods) > 16) {
+					small.phi<-.99
+				} else {
+					small.phi<-.97
+				}
 			} else {
 				small.phi<-1
 			}
@@ -365,7 +377,7 @@ calcLikelihood<-function(param.vector, opt.env, x.nought, use.beta, use.small.ph
 	D<-opt.env$F - g$g %*% w$w.transpose
 	#print("two 2 - AFTER")
 	#print(param.vector)
-	if(checkAdmissibility(D=D, box.cox=box.cox.parameter, small.phi=small.phi, ar.coefs=ar.coefs, ma.coefs=ma.coefs)) {
+	if(checkAdmissibility(D=D, box.cox=box.cox.parameter, small.phi=small.phi, ar.coefs=ar.coefs, ma.coefs=ma.coefs, tau=tau)) {
 		return(log.likelihood)
 	} else {
 		return(10^20)
@@ -445,7 +457,7 @@ calcLikelihoodNOTransformed<-function(param.vector, opt.env, x.nought, use.beta,
 	D<-opt.env$F - g$g %*% w$w.transpose
 	#print("three 3  - AFTER")
 	
-	if(checkAdmissibility(D=D, box.cox=NULL, small.phi=small.phi, ar.coefs=ar.coefs, ma.coefs=ma.coefs)) {
+	if(checkAdmissibility(D=D, box.cox=NULL, small.phi=small.phi, ar.coefs=ar.coefs, ma.coefs=ma.coefs, tau=tau)) {
 		return(log.likelihood)
 	} else {
 		return(10^20)
