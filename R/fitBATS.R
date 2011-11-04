@@ -194,7 +194,9 @@ fitSpecificBATS<-function(y, use.box.cox, use.beta, use.damping, seasonal.period
 	#Set up environment
 	opt.env<-new.env()
 	assign("F", F, envir=opt.env)
-	assign("y", y, envir=opt.env)
+	assign("y", matrix(y, nrow=1, ncol=length(y)), envir=opt.env)
+	assign("y.hat", matrix(0, nrow=1, ncol=length(y)), envir=opt.env)
+	assign("e", matrix(0, nrow=1, ncol=length(y)), envir=opt.env)
 	assign("x", matrix(0, nrow=length(x.nought), ncol=length(y)),  envir=opt.env)
 	if(!is.null(seasonal.periods)) {
 		tau<-sum(seasonal.periods)
@@ -205,9 +207,10 @@ fitSpecificBATS<-function(y, use.box.cox, use.beta, use.damping, seasonal.period
 	##Second pass of optimisation
 	if(use.box.cox) {
 		#Un-transform the seed states
-		x.nought.untransformed<-InvBoxCox(x.nought, lambda=lambda)
+		#x.nought.untransformed<-InvBoxCox(x.nought, lambda=lambda)
+		assign("x.nought.untransformed", InvBoxCox(x.nought, lambda=lambda), envir=opt.env)
 		#Optimise the likelihood function
-		optim.like<-optim(par=param.vector$vect, fn=calcLikelihood, method="Nelder-Mead", opt.env=opt.env, x.nought=x.nought.untransformed, use.beta=use.beta, use.small.phi=use.damping, seasonal.periods=seasonal.periods, p=p, q=q, tau=tau, control=list(maxit=(100*length(param.vector$vect)^2)))
+		optim.like<-optim(par=param.vector$vect, fn=calcLikelihood, method="Nelder-Mead", opt.env=opt.env, use.beta=use.beta, use.small.phi=use.damping, seasonal.periods=seasonal.periods, p=p, q=q, tau=tau, control=list(maxit=(100*length(param.vector$vect)^2)))
 		#Get the parameters out of the param.vector
 		paramz<-unParameterise(optim.like$par, param.vector$control)
 		lambda<-paramz$lambda
@@ -218,7 +221,7 @@ fitSpecificBATS<-function(y, use.box.cox, use.beta, use.damping, seasonal.period
 		ar.coefs<-paramz$ar.coefs
 		ma.coefs<-paramz$ma.coefs
 		#Transform the seed states
-		x.nought<-BoxCox(x.nought.untransformed, lambda=lambda)
+		x.nought<-BoxCox(opt.env$x.nought.untransformed, lambda=lambda)
 		
 		
 		
@@ -300,7 +303,7 @@ calcModel<-function(y, x.nought, F, g, w) { #w is passed as a list
 	return(list(y.hat=loop$y.hat, e=loop$e, x=loop$x))
 }
 
-calcLikelihood<-function(param.vector, opt.env, x.nought, use.beta, use.small.phi, seasonal.periods, p=0, q=0, tau=NULL) {
+calcLikelihood<-function(param.vector, opt.env, use.beta, use.small.phi, seasonal.periods, p=0, q=0, tau=0) {
 	#param vector should be as follows: Box-Cox.parameter, alpha, beta, small.phi, gamma.vector, ar.coefs, ma.coefs 
 	#Put the components of the param.vector into meaningful individual variables
 	box.cox.parameter<-param.vector[1]
@@ -337,7 +340,7 @@ calcLikelihood<-function(param.vector, opt.env, x.nought, use.beta, use.small.ph
 	} else {
 		ma.coefs<-NULL
 	}
-	x.nought<-BoxCox(x.nought, lambda=box.cox.parameter)	
+	x.nought<-BoxCox(opt.env$x.nought.untransformed, lambda=box.cox.parameter)	
 	#w<-makeWMatrix(small.phi=small.phi, seasonal.periods=seasonal.periods, ar.coefs=ar.coefs, ma.coefs=ma.coefs)
 	w<-.Call("makeBATSWMatrix", smallPhi_s = small.phi, sPeriods_s = seasonal.periods, arCoefs_s = ar.coefs, maCoefs_s = ma.coefs, PACKAGE = "forecast")
 	
@@ -346,8 +349,8 @@ calcLikelihood<-function(param.vector, opt.env, x.nought, use.beta, use.small.ph
 	#F<-makeFMatrix(alpha=alpha, beta=beta.v, small.phi=small.phi, seasonal.periods=seasonal.periods, gamma.bold.matrix=g$gamma.bold.matrix, ar.coefs=ar.coefs, ma.coefs=ma.coefs)
 	.Call("updateFMatrix", opt.env$F, small.phi, alpha, beta.v, g$gamma.bold.matrix, ar.coefs, ma.coefs, tau, PACKAGE="forecast")	
 
-	transformed.y<-BoxCox(opt.env$y, box.cox.parameter)
-	n<-length(opt.env$y)
+	mat.transformed.y<-BoxCox(opt.env$y, box.cox.parameter)
+	n<-ncol(opt.env$y)
 	######################################################################
 	#e<-calcModel(y=transformed.y, x.nought=x.nought, F=F, g=g$g, w=w)$e
 	######################
@@ -355,14 +358,14 @@ calcLikelihood<-function(param.vector, opt.env, x.nought, use.beta, use.small.ph
 	##
 	
 	#x<-matrix(0, nrow=length(x.nought), ncol=n)
-	y.hat<-matrix(0,nrow=1, ncol=n)
-	e<-matrix(0, nrow=1, ncol=n)
-	y.hat[,1]<-w$w.transpose %*% x.nought
-	e[,1]<-transformed.y[1]-y.hat[,1]
-	opt.env$x[,1]<-opt.env$F %*% x.nought + g$g %*% e[,1]
-	mat.transformed.y<-matrix(transformed.y, nrow=1, ncol=n)
+	#y.hat<-matrix(0,nrow=1, ncol=n)
+	#e<-matrix(0, nrow=1, ncol=n)
+	opt.env$y.hat[,1]<-w$w.transpose %*% x.nought
+	opt.env$e[,1]<-mat.transformed.y[,1]-opt.env$y.hat[,1]
+	opt.env$x[,1]<-opt.env$F %*% x.nought + g$g %*% opt.env$e[,1]
+	#mat.transformed.y<-matrix(transformed.y, nrow=1, ncol=n)
 	
-	e<-.Call( "calcBATS", ys=mat.transformed.y, yHats=y.hat, wTransposes = w$w.transpose, Fs=opt.env$F, xs=opt.env$x, gs=g$g, es=e, PACKAGE = "forecast" )$e
+	.Call( "calcBATSFaster", ys=mat.transformed.y, yHats=opt.env$y.hat, wTransposes = w$w.transpose, Fs=opt.env$F, xs=opt.env$x, gs=g$g, es=opt.env$e, PACKAGE = "forecast" )
 	
 	
 	##
@@ -370,14 +373,15 @@ calcLikelihood<-function(param.vector, opt.env, x.nought, use.beta, use.small.ph
 	####################################################################
 	
 
-	log.likelihood<-n*log(sum(e^2))-2*(box.cox.parameter-1)*sum(log(opt.env$y))
+	log.likelihood<-n*log(sum(opt.env$e^2))-2*(box.cox.parameter-1)*sum(log(opt.env$y))
 
 	
 	#print("two 2 - before")
-	D<-opt.env$F - g$g %*% w$w.transpose
+	#D<-opt.env$F - g$g %*% w$w.transpose
+	assign("D", (opt.env$F - g$g %*% w$w.transpose), envir=opt.env)
 	#print("two 2 - AFTER")
 	#print(param.vector)
-	if(checkAdmissibility(D=D, box.cox=box.cox.parameter, small.phi=small.phi, ar.coefs=ar.coefs, ma.coefs=ma.coefs, tau=tau)) {
+	if(checkAdmissibility(opt.env, box.cox=box.cox.parameter, small.phi=small.phi, ar.coefs=ar.coefs, ma.coefs=ma.coefs, tau=tau)) {
 		return(log.likelihood)
 	} else {
 		return(10^20)
@@ -431,7 +435,7 @@ calcLikelihoodNOTransformed<-function(param.vector, opt.env, x.nought, use.beta,
 
 	#F<-makeFMatrix(alpha=alpha, beta=beta.v, small.phi=small.phi, seasonal.periods=seasonal.periods, gamma.bold.matrix=g$gamma.bold.matrix, ar.coefs=ar.coefs, ma.coefs=ma.coefs)
 	.Call("updateFMatrix", opt.env$F, small.phi, alpha, beta.v, g$gamma.bold.matrix, ar.coefs, ma.coefs, tau, PACKAGE="forecast")
-	n<-length(opt.env$y)
+	n<-ncol(opt.env$y)
 	
 	#########################################################################################
 	#e<-calcModel(y=y, x.nought=x.nought, F=F, g=g$g, w=w)$e
@@ -439,25 +443,26 @@ calcLikelihoodNOTransformed<-function(param.vector, opt.env, x.nought, use.beta,
 	#### calcModel() code:
 	##
 	#x<-matrix(0, nrow=length(x.nought), ncol=n)
-	y.hat<-matrix(0,nrow=1, ncol=n)
-	e<-matrix(0, nrow=1, ncol=n)
-	y.hat[,1]<-w$w.transpose %*% x.nought
-	e[,1]<-opt.env$y[1]-y.hat[,1]
-	opt.env$x[,1]<-opt.env$F %*% x.nought + g$g %*% e[,1]
-	mat.y<-matrix(opt.env$y, nrow=1, ncol=n)
+	#y.hat<-matrix(0,nrow=1, ncol=n)
+	#e<-matrix(0, nrow=1, ncol=n)
+	opt.env$y.hat[,1]<-w$w.transpose %*% x.nought
+	opt.env$e[,1]<-opt.env$y[,1]-opt.env$y.hat[,1]
+	opt.env$x[,1]<-opt.env$F %*% x.nought + g$g %*% opt.env$e[,1]
+	#mat.y<-matrix(opt.env$y, nrow=1, ncol=n)
 	
-	e<-.Call( "calcBATS", ys=mat.y, yHats=y.hat, wTransposes = w$w.transpose, Fs=opt.env$F, xs=opt.env$x, gs=g$g, es=e, PACKAGE = "forecast" )$e
+	.Call( "calcBATSFaster", ys=opt.env$y, yHats=opt.env$y.hat, wTransposes = w$w.transpose, Fs=opt.env$F, xs=opt.env$x, gs=g$g, es=opt.env$e, PACKAGE = "forecast" )
 	##
 	####
 	####################################################################
 	
 	
-	log.likelihood<-n*log(sum(e*e))
+	log.likelihood<-n*log(sum(opt.env$e*opt.env$e))
 	#print("three 3 - before")
-	D<-opt.env$F - g$g %*% w$w.transpose
+	#D<-opt.env$F - g$g %*% w$w.transpose
+	assign("D", (opt.env$F - g$g %*% w$w.transpose), envir=opt.env)
 	#print("three 3  - AFTER")
 	
-	if(checkAdmissibility(D=D, box.cox=NULL, small.phi=small.phi, ar.coefs=ar.coefs, ma.coefs=ma.coefs, tau=tau)) {
+	if(checkAdmissibility(opt.env=opt.env, box.cox=NULL, small.phi=small.phi, ar.coefs=ar.coefs, ma.coefs=ma.coefs, tau=tau)) {
 		return(log.likelihood)
 	} else {
 		return(10^20)
