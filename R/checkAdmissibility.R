@@ -64,7 +64,8 @@ checkAdmissibility<-function(opt.env, box.cox=NULL, small.phi=NULL, ar.coefs=NUL
 	}
 	
 	#Check the eigen values of the D matrix
-	D.eigen.values<-eigen(opt.env$D, only.values=TRUE)$values
+	#D.eigen.values<-eigen(opt.env$D, only.values=TRUE)$values
+	D.eigen.values<-.Call("La_rg", opt.env$D, TRUE, PACKAGE = "base")$values
 	
 	return(all(abs(D.eigen.values) < 1+1e-10))
 	
