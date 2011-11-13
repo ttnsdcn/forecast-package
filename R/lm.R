@@ -3,7 +3,7 @@ tslm <- function(formula,data,lambda=NULL,...)
   if(missing(data)) # Grab first variable
   {
     dataname <- as.character(formula)[2]
-    x <- get(dataname)
+    x <- get(dataname, envir=parent.frame())
     data <- data.frame(x)
     colnames(data) <- dataname
   }
