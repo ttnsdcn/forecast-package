@@ -360,12 +360,12 @@ calcLikelihood<-function(param.vector, opt.env, use.beta, use.small.phi, seasona
 	#x<-matrix(0, nrow=length(x.nought), ncol=n)
 	#y.hat<-matrix(0,nrow=1, ncol=n)
 	#e<-matrix(0, nrow=1, ncol=n)
-	opt.env$y.hat[,1]<-w$w.transpose %*% x.nought
-	opt.env$e[,1]<-mat.transformed.y[,1]-opt.env$y.hat[,1]
-	opt.env$x[,1]<-opt.env$F %*% x.nought + g$g %*% opt.env$e[,1]
+	#opt.env$y.hat[,1]<-w$w.transpose %*% x.nought
+	#opt.env$e[,1]<-mat.transformed.y[,1]-opt.env$y.hat[,1]
+	#opt.env$x[,1]<-opt.env$F %*% x.nought + g$g %*% opt.env$e[,1]
 	#mat.transformed.y<-matrix(transformed.y, nrow=1, ncol=n)
 	
-	.Call( "calcBATSFaster", ys=mat.transformed.y, yHats=opt.env$y.hat, wTransposes = w$w.transpose, Fs=opt.env$F, xs=opt.env$x, gs=g$g, es=opt.env$e, PACKAGE = "forecast" )
+	.Call( "calcBATSFaster", ys=mat.transformed.y, yHats=opt.env$y.hat, wTransposes = w$w.transpose, Fs=opt.env$F, xs=opt.env$x, gs=g$g, es=opt.env$e, xNought_s = x.nought, sPeriods_s = seasonal.periods, betaV = beta.v, tau_s = as.integer(tau), p_s = as.integer(p), q_s = as.integer(q), PACKAGE = "forecast" )
 	
 	
 	##
@@ -445,12 +445,12 @@ calcLikelihoodNOTransformed<-function(param.vector, opt.env, x.nought, use.beta,
 	#x<-matrix(0, nrow=length(x.nought), ncol=n)
 	#y.hat<-matrix(0,nrow=1, ncol=n)
 	#e<-matrix(0, nrow=1, ncol=n)
-	opt.env$y.hat[,1]<-w$w.transpose %*% x.nought
-	opt.env$e[,1]<-opt.env$y[,1]-opt.env$y.hat[,1]
-	opt.env$x[,1]<-opt.env$F %*% x.nought + g$g %*% opt.env$e[,1]
+	#opt.env$y.hat[,1]<-w$w.transpose %*% x.nought
+	#opt.env$e[,1]<-opt.env$y[,1]-opt.env$y.hat[,1]
+	#opt.env$x[,1]<-opt.env$F %*% x.nought + g$g %*% opt.env$e[,1]
 	#mat.y<-matrix(opt.env$y, nrow=1, ncol=n)
 	
-	.Call( "calcBATSFaster", ys=opt.env$y, yHats=opt.env$y.hat, wTransposes = w$w.transpose, Fs=opt.env$F, xs=opt.env$x, gs=g$g, es=opt.env$e, PACKAGE = "forecast" )
+	.Call( "calcBATSFaster", ys=opt.env$y, yHats=opt.env$y.hat, wTransposes = w$w.transpose, Fs=opt.env$F, xs=opt.env$x, gs=g$g, es=opt.env$e, xNought_s = x.nought, sPeriods_s = seasonal.periods, betaV = beta.v, tau_s = as.integer(tau), p_s = as.integer(p), q_s = as.integer(q) , PACKAGE = "forecast" )
 	##
 	####
 	####################################################################
