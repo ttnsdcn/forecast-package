@@ -93,7 +93,7 @@ SEXP calcBATSFaster(SEXP ys, SEXP yHats, SEXP wTransposes, SEXP Fs, SEXP xs, SEX
 			yHat(0,0) = yHat(0,0) +  xNought( (sPeriods[i] + adjBeta), 0);
 		}
 		if(lengthArma > 0) {
-			//Rprintf("one-4\n");
+			//Rprintf("bg-1");
 			yHat.col(0) = yHat(0,0) + wTranspose.cols((*tau + adjBeta + 1), (xNought.n_rows-1)) * xNought.rows((*tau + adjBeta + 1), (xNought.n_rows-1));
 		}
 		//Two
@@ -102,7 +102,7 @@ SEXP calcBATSFaster(SEXP ys, SEXP yHats, SEXP wTransposes, SEXP Fs, SEXP xs, SEX
 		//Rprintf("three-5\n");
 		x.submat(0, 0, adjBeta, 0) = F.submat(0,0,adjBeta,adjBeta) * xNought.rows(0,adjBeta);
 		if(lengthArma > 0) {
-			//Rprintf("three-6\n");
+			//Rprintf("bg-2");
 			x.submat(0, 0, adjBeta, 0) += F.submat(0,(adjBeta+ *tau + 1),adjBeta,(F.n_cols - 1)) * xNought.rows((adjBeta+ *tau + 1),(F.n_cols - 1));
 		}
 		previousS = 0;
@@ -110,7 +110,7 @@ SEXP calcBATSFaster(SEXP ys, SEXP yHats, SEXP wTransposes, SEXP Fs, SEXP xs, SEX
 			//Rprintf("three-7\n");
 			x((adjBeta+previousS+1),0) = xNought((adjBeta+previousS+sPeriods[i]),0);
 			if(lengthArma > 0) {
-				//Rprintf("three-8\n");
+				//Rprintf("bg-3");
 				x.submat((adjBeta+previousS+1),0, (adjBeta+previousS+1),0) = x.submat((adjBeta+previousS+1),0, (adjBeta+previousS+1),0) + F.submat((adjBeta + previousS + 1), (adjBeta+*tau+1), (adjBeta + previousS + 1), (F.n_cols-1)) * xNought.rows((adjBeta + *tau +1), (F.n_cols-1));
 			}
 			//Rprintf("three-9\n");
@@ -118,10 +118,12 @@ SEXP calcBATSFaster(SEXP ys, SEXP yHats, SEXP wTransposes, SEXP Fs, SEXP xs, SEX
 			previousS = sPeriods[i];
 		}
 		if(*p > 0) {
-			//Rprintf("three-10\n");
+			//Rprintf("bg-4");
 			x.submat((adjBeta+ *tau + 1),0,(adjBeta+ *tau + 1),0) = F.submat((adjBeta + *tau +1), (adjBeta + *tau +1), (adjBeta + *tau + 1), (F.n_cols-1)) * xNought.rows((adjBeta+*tau+1), (F.n_cols-1));
-			//Rprintf("three-11\n");
-			x.submat((adjBeta + *tau + 2),0,(adjBeta + *tau + *p),0) = xNought.rows((adjBeta + *tau + 1),(adjBeta + *tau + *p-1));
+			//Rprintf("bg-5"); ////error is HERE!!!
+			if(*p > 1) {
+				x.submat((adjBeta + *tau + 2),0,(adjBeta + *tau + *p),0) = xNought.rows((adjBeta + *tau + 1),(adjBeta + *tau + *p-1));
+			}
 		}
 		if(*q > 0) {
 			//Rprintf("three-12\n");
@@ -144,9 +146,7 @@ SEXP calcBATSFaster(SEXP ys, SEXP yHats, SEXP wTransposes, SEXP Fs, SEXP xs, SEX
 				yHat(0,t) += x((sPeriods[i] + adjBeta), (t-1));
 			}
 			if(lengthArma > 0) {
-				//Rprintf("point-xxx\n");
-				//std::cout<<wTranspose.cols((*tau + adjBeta + 1), (xNought.n_rows-1))<<std::endl;
-				//std::cout<<
+				//Rprintf("bg-6");
 				yHat.col(t) += wTranspose.cols((*tau + adjBeta + 1), (xNought.n_rows-1)) * x.submat((*tau + adjBeta + 1), (t-1), (x.n_rows-1), (t-1));
 			}
 			//Two
@@ -156,7 +156,7 @@ SEXP calcBATSFaster(SEXP ys, SEXP yHats, SEXP wTransposes, SEXP Fs, SEXP xs, SEX
 			//Rprintf("point-x5\n");
 			x.submat(0, t, adjBeta, t) = F.submat(0,0,adjBeta,adjBeta) * x.submat(0, (t-1), adjBeta, (t-1));
 			if(lengthArma > 0) {
-				//Rprintf("point-x6\n");
+				//Rprintf("bg-7");
 				x.submat(0, t, adjBeta, t) += F.submat(0,(adjBeta+ *tau + 1),adjBeta,(F.n_cols - 1)) * x.submat((adjBeta+ *tau + 1), (t-1), (F.n_cols - 1), (t-1));
 			}
 			previousS = 0;
@@ -164,7 +164,7 @@ SEXP calcBATSFaster(SEXP ys, SEXP yHats, SEXP wTransposes, SEXP Fs, SEXP xs, SEX
 				//Rprintf("point-x7\n");
 				x((adjBeta+previousS+1),t) = x((adjBeta+previousS+sPeriods[i]),(t-1));
 				if(lengthArma > 0) {
-					//Rprintf("Three-L-8\n");
+					//Rprintf("bg-8");
 					x.submat((adjBeta+previousS+1),t, (adjBeta+previousS+1),t) += F.submat((adjBeta + previousS + 1), (adjBeta+*tau+1), (adjBeta + previousS + 1), (F.n_cols-1)) * x.submat((adjBeta + *tau +1), (t-1), (F.n_cols-1), (t-1));
 				}
 				//Rprintf("Three-L-9\n");
@@ -189,19 +189,11 @@ SEXP calcBATSFaster(SEXP ys, SEXP yHats, SEXP wTransposes, SEXP Fs, SEXP xs, SEX
 			}
 */
 			if(*p > 0) {
-				//Rprintf("Three-L-10\n");
+				//Rprintf("bg-9");
 
 				x.submat((adjBeta+ *tau + 1),t, (adjBeta+ *tau + 1),t) = F.submat((adjBeta + *tau +1), (adjBeta + *tau +1), (adjBeta + *tau + 1), (F.n_cols-1)) * x.submat((adjBeta+*tau+1), (t-1), (F.n_cols-1), (t-1));
 				if(*p > 1) {
-					//Rprintf("Three-L-11\n");
-					//std::cout<<*p<<std::endl;
-					//Rprintf("\n");
-					//std::cout<<t<<std::endl;
-					//Rprintf("\n");
-					//std::cout<<*tau<<std::endl;
-					//Rprintf("\n");
-					//std::cout<<adjBeta<<std::endl;
-					//Rprintf("\n");
+					//Rprintf("bg-10");
 					x.submat((adjBeta + *tau + 2),t,(adjBeta + *tau + *p),t) = x.submat((adjBeta + *tau + 1), (t-1), (adjBeta + *tau + *p -1), (t-1));
 					//Rprintf("corp brear!!!\n");
 					//std::cout<<x.submat(arma::span((adjBeta + *tau + 2), (adjBeta + *tau + *p)), arma::span(t, t))<<std::endl;
