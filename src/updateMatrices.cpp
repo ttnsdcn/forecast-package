@@ -11,6 +11,8 @@
 using namespace Rcpp ;
 
 SEXP updateFMatrix(SEXP F_s, SEXP smallPhi_s, SEXP alpha_s, SEXP beta_s, SEXP gammaBold_s, SEXP ar_s, SEXP ma_s, SEXP tau_s) {
+	BEGIN_RCPP
+
 	NumericMatrix F_r(F_s);
 	arma::mat F(F_r.begin(), F_r.nrow(), F_r.ncol(), false);
 
@@ -101,4 +103,87 @@ SEXP updateFMatrix(SEXP F_s, SEXP smallPhi_s, SEXP alpha_s, SEXP beta_s, SEXP ga
 
 	return R_NilValue;
 
+	END_RCPP
+
+}
+
+SEXP updateWtransposeMatrix(SEXP wTranspose_s, SEXP smallPhi_s, SEXP tau_s, SEXP arCoefs_s, SEXP maCoefs_s, SEXP p_s, SEXP q_s) {
+	BEGIN_RCPP
+
+	NumericMatrix wTranspose(wTranspose_s);
+
+	double *arCoefs, *maCoefs;
+	int *p, *q, *tau, adjBeta = 0;
+
+	p = &INTEGER(p_s)[0];
+	q = &INTEGER(q_s)[0];
+	tau = &INTEGER(tau_s)[0];
+
+	if(!Rf_isNull(smallPhi_s)) {
+		adjBeta = 1;
+		wTranspose(0,1) = REAL(smallPhi_s)[0];
+	}
+
+	if(*p > 0) {
+		arCoefs = REAL(arCoefs_s);
+		for(int i = 1; i <= *p; i++) {
+			wTranspose(0,(adjBeta + *tau + i)) = arCoefs[(i - 1)];
+		}
+		if(*q > 0) {
+			maCoefs = REAL(maCoefs_s);
+			for(int i = 1; i <= *q; i++) {
+				wTranspose(0,(adjBeta + *tau + *p + i)) = maCoefs[(i - 1)];
+			}
+		}
+	} else if(*q > 0) {
+		maCoefs = REAL(maCoefs_s);
+		for(int i = 1; i <= *q; i++) {
+			wTranspose(0,(adjBeta + *tau + i)) = maCoefs[(i - 1)];
+		}
+	}
+
+	return R_NilValue;
+
+	END_RCPP
+}
+
+SEXP updateGMatrix(SEXP g_s, SEXP gammaBold_s, SEXP alpha_s, SEXP beta_s, SEXP gammaVector_s, SEXP seasonalPeriods_s) {
+	BEGIN_RCPP
+
+
+	int adjBeta = 0, *seasonalPeriods;
+
+	double *gammaVector;
+
+	NumericMatrix g(g_s);
+
+
+	g(0,0) = REAL(alpha_s)[0];
+	if(!Rf_isNull(beta_s)) {
+		g(1,0) = REAL(beta_s)[0];
+		adjBeta = 1;
+	}
+
+	if((!Rf_isNull(gammaVector_s))&&(!Rf_isNull(seasonalPeriods_s))) {
+		NumericMatrix gammaBold(gammaBold_s);
+		seasonalPeriods = INTEGER(seasonalPeriods_s);
+		gammaVector = REAL(gammaVector_s);
+		int position = adjBeta + 1;
+		int bPos = 0;
+		gammaBold(0,bPos) = gammaVector[0];
+		g(position, 0) = gammaVector[0];
+		if(LENGTH(gammaVector_s) > 1) {
+			for(R_len_t s = 0; s < (LENGTH(seasonalPeriods_s)-1); s++) {
+				position = position + seasonalPeriods[s];
+				bPos = bPos + seasonalPeriods[s];
+				g(position, 0) = gammaVector[(s+1)];
+			}
+
+
+		}
+	}
+
+	return R_NilValue;
+
+	END_RCPP
 }
