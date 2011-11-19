@@ -115,7 +115,7 @@ SEXP calcBATSFaster(SEXP ys, SEXP yHats, SEXP wTransposes, SEXP Fs, SEXP xs, SEX
 			}
 			//Rprintf("three-9\n");
 			x.submat((adjBeta + previousS + 2), 0, (adjBeta + previousS + sPeriods[i]), 0) = xNought.rows((adjBeta + previousS + 1), (adjBeta + previousS + sPeriods[i] -1));
-			previousS = sPeriods[i];
+			previousS += sPeriods[i];
 		}
 		if(*p > 0) {
 			//Rprintf("bg-4");
@@ -134,8 +134,35 @@ SEXP calcBATSFaster(SEXP ys, SEXP yHats, SEXP wTransposes, SEXP Fs, SEXP xs, SEX
 			}
 		}
 		///Temporary fix!
-		x.col(0) += g * e(0,0);
+		//x.col(0) += g * e(0,0);
 		//End
+		//std::cout<<x.col(0)<<std::endl;
+		//if(lengthArma > 0) {
+
+		//std::cout<<(x.col(0) + g * e(0,0))<<std::endl;
+		//}
+		//std::cout<<g<<std::endl;
+		//std::cout<<e(0,0)<<std::endl;
+		///////////
+		x(0,0) += g(0,0) * e(0,0);
+		if(adjBeta == 1) {
+			x(1,0) += g(1,0) * e(0,0);
+		}
+		previousS = 0;
+		for(R_len_t i = 0; i < lengthSeasonal; i++) {
+			x((adjBeta+previousS+1),0) += g((adjBeta+previousS+1),0) * e(0,0);
+			previousS += sPeriods[i];
+		}
+		if(*p > 0) {
+			x((adjBeta + *tau + 1),0) += e(0,0);
+			if(*q > 0) {
+				x((adjBeta + *tau + *p + 1),0) += e(0,0);
+			}
+		} else if(*q > 0) {
+			x((adjBeta + *tau + 1),0) += e(0,0);
+		}
+		/////////////////////////////////
+
 		for(int t = 1; t < yr.ncol(); t++) {
 			//Rprintf("point-x\n");
 			//One
@@ -169,7 +196,7 @@ SEXP calcBATSFaster(SEXP ys, SEXP yHats, SEXP wTransposes, SEXP Fs, SEXP xs, SEX
 				}
 				//Rprintf("Three-L-9\n");
 				x.submat((adjBeta + previousS + 2), t, (adjBeta + previousS + sPeriods[i]), t) = x.submat((adjBeta + previousS + 1), (t-1), (adjBeta + previousS + sPeriods[i] -1), (t-1));
-				previousS = sPeriods[i];
+				previousS += sPeriods[i];
 			}
 /*
 			if(lengthArma > 0) {
@@ -234,9 +261,30 @@ SEXP calcBATSFaster(SEXP ys, SEXP yHats, SEXP wTransposes, SEXP Fs, SEXP xs, SEX
 			}
 			//Rprintf("argh!2\n");
 			///Temporary fix!
-			x.col(t) += g * e(0,t);
+			//x.col(t) += g * e(0,t);
 			//End
 			//Rprintf("argh!5\n");
+
+			///////////
+			x(0,t) += g(0,0) * e(0,t);
+			if(adjBeta == 1) {
+				x(1,t) += g(1,0) * e(0,t);
+			}
+			previousS = 0;
+			for(R_len_t i = 0; i < lengthSeasonal; i++) {
+				x((adjBeta+previousS+1),t) += g((adjBeta+previousS+1),0) * e(0,t);
+				previousS += sPeriods[i];
+			}
+			if(*p > 0) {
+				x((adjBeta + *tau + 1),t) += e(0,t);
+				if(*q > 0) {
+					x((adjBeta + *tau + *p + 1),t) += e(0,t);
+				}
+			} else if(*q > 0) {
+				x((adjBeta + *tau + 1),t) += e(0,t);
+			}
+			/////////////////////////////////
+
 
 		}
 
