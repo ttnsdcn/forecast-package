@@ -88,9 +88,11 @@ SEXP calcBATSFaster(SEXP ys, SEXP yHats, SEXP wTransposes, SEXP Fs, SEXP xs, SEX
 		//Rprintf("one-1\n");
 		yHat.col(0) = wTranspose.cols(0, adjBeta) * xNought.rows(0, adjBeta);
 		//Rprintf("one-2\n");
+		previousS = 0;
 		for(R_len_t i = 0; i < lengthSeasonal; i++) {
 			//Rprintf("one-3\n");
-			yHat(0,0) = yHat(0,0) +  xNought( (sPeriods[i] + adjBeta), 0);
+			yHat(0,0) = yHat(0,0) +  xNought( (previousS + sPeriods[i] + adjBeta), 0);
+			previousS += sPeriods[i];
 		}
 		if(lengthArma > 0) {
 			//Rprintf("bg-1");
@@ -167,10 +169,12 @@ SEXP calcBATSFaster(SEXP ys, SEXP yHats, SEXP wTransposes, SEXP Fs, SEXP xs, SEX
 			//Rprintf("point-x\n");
 			//One
 			yHat.col(t) = wTranspose.cols(0, adjBeta) * x.submat(0, (t-1), adjBeta, (t-1));
+			previousS = 0;
 			for(R_len_t i = 0; i < lengthSeasonal; i++) {
 				//mod here
 				//Rprintf("point-xx\n");
-				yHat(0,t) += x((sPeriods[i] + adjBeta), (t-1));
+				yHat(0,t) += x((previousS + sPeriods[i] + adjBeta), (t-1));
+				previousS += sPeriods[i];
 			}
 			if(lengthArma > 0) {
 				//Rprintf("bg-6");
