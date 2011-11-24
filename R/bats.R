@@ -94,7 +94,7 @@ bats<-function(y, use.box.cox=NULL, use.trend=NULL, use.damped.trend=NULL, seaso
 					}
 				} else {
 					best.model<-current.model
-					best.aic<-best.model$aic
+					best.aic<-best.model$AIC
 				}
 			}
 		}
