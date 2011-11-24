@@ -4,7 +4,7 @@
 ###############################################################################
 
 
-forecast.bats<-function(object, h=10, level=c(80,95), fan=FALSE, ts.frequency=max(object$seasonal.periods)) {
+forecast.bats<-function(object, h=10, level=c(80,95), fan=FALSE, ts.frequency=(if(!is.null(object$seasonal.periods)) { max(object$seasonal.periods)} else { 1})) {
 	if(h<=0) {
 		stop("Forecast horizon out of bounds")
 	}
@@ -70,9 +70,9 @@ forecast.bats<-function(object, h=10, level=c(80,95), fan=FALSE, ts.frequency=ma
 	y<-ts(y, start=object$start.time, frequency=ts.frequency)
 	fcast.start.time<-end(y)
 	#Make msts object for x and mean
-	x<-msts(object$y, seasonal.periods=object$seasonal.periods, ts.frequency=ts.frequency, start=object$start.time)
-	fitted.values<-msts(object$fitted.values, seasonal.periods=object$seasonal.periods, start=object$start.time)
-	y.forecast<-msts(y.forecast, seasonal.periods=object$seasonal.periods, start=fcast.start.time)
+	x<-msts(object$y, seasonal.periods=(if(!is.null(object$seasonal.periods)) { object$seasonal.periods} else { 1}), ts.frequency=ts.frequency, start=object$start.time)
+	fitted.values<-msts(object$fitted.values, seasonal.periods=(if(!is.null(object$seasonal.periods)) { object$seasonal.periods} else { 1}), start=object$start.time)
+	y.forecast<-msts(y.forecast, seasonal.periods=(if(!is.null(object$seasonal.periods)) { object$seasonal.periods} else { 1}), start=fcast.start.time)
 		
 	forecast.object<-list(model=object, mean=y.forecast, level=level, x=x, upper=upper.bounds, lower=lower.bounds, fitted=fitted.values, method=makeText(object), residuals=object$e)
 	class(forecast.object)<-"forecast"
