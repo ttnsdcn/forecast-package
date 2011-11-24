@@ -33,11 +33,11 @@ fitSpecificBATS<-function(y, use.box.cox, use.beta, use.damping, seasonal.period
 			}
 			b<-0
 			if(use.damping) {
-				if(sum(seasonal.periods) > 16) {
-					small.phi<-.99
-				} else {
-					small.phi<-.97
-				}
+				#if(sum(seasonal.periods) > 16) {
+					small.phi<-.999
+				#} else {
+				#	small.phi<-.97
+				#}
 			} else {
 				small.phi<-1
 			}
