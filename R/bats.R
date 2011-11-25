@@ -27,7 +27,12 @@ filterSpecifics<-function(y, box.cox, trend, damping, seasonal.periods, use.arma
 		}
 	}
 	if(use.arma.errors) { 
+		##Turn off warnings
+		old.warning.level <- options()$warn
+		options(warn=-1)
 		arma<-auto.arima(as.numeric(first.model$e), d=0, ...)
+		###Re-enable warnings
+		options(warn=old.warning.level)
 		p<-arma$arma[1]
 		q<-arma$arma[2]
 		if((p != 0) | (q != 0)) { #Did auto.arima() find any AR() or MA() coefficients?
