@@ -593,6 +593,7 @@ OCSBtest <- function(time.series, period)
 
 	se <- sqrt(diag(regression$var.coef))
 	t.two <- regression$coef[names(regression$coef)=="y.two"]/se[names(se)=="y.two"]
-
+	###Re-enable warnings
+	options(warn=old.warning.level)
 	return(as.numeric(t.two >= calcOCSBCritVal(period)))
 }
