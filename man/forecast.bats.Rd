@@ -34,7 +34,7 @@ An object of class \code{"forecast"} is a list containing at least the following
 \item{fitted}{Fitted values (one-step forecasts)}
 }
 
-\references{De Livera, A.M., Hyndman, R.J., & Snyder, R.D. (2010).
+\references{De Livera, A.M., Hyndman, R.J., & Snyder, R. D. (2010), Forecasting time series with complex seasonal patterns using exponential smoothing, Journal of the American Statistical Association, to appear.
 }
 
 \seealso{\code{\link{bats}}, \code{forecast.ets}.}

@@ -21,7 +21,7 @@
 The generic accessor functions \code{fitted.values} and \code{residuals} extract useful features of
 the value returned by \code{ets} and associated functions.}
 
-\references{De Livera, A.M., Hyndman, R.J., & Snyder, R.D. (2010).
+\references{De Livera, A.M., Hyndman, R.J., & Snyder, R. D. (2010), Forecasting time series with complex seasonal patterns using exponential smoothing, Journal of the American Statistical Association, to appear. 
 }
 
 \author{Rob J Hyndman and Slava Razbash}
