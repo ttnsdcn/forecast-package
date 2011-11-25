@@ -59,6 +59,9 @@ filterSpecifics<-function(y, box.cox, trend, damping, seasonal.periods, use.arma
 
 
 bats<-function(y, use.box.cox=NULL, use.trend=NULL, use.damped.trend=NULL, seasonal.periods=NULL, use.arma.errors=TRUE, ...) {
+	if(any((y <= 0))) {
+		stop("BATS requires positive data")
+	}
 	if(any(class(y) == "msts")) {
 		start.time<-start(y)
 		seasonal.periods<-attr(y,"msts")

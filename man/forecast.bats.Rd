@@ -42,10 +42,12 @@ An object of class \code{"forecast"} is a list containing at least the following
 \author{Rob J Hyndman and Slava Razbash}
 
 \examples{
-air.passengers<-msts(AirPassengers, seasonal.periods=c(4,12,18), ts.frequency=12)
 fit<-bats(air.passengers)
-plot(forecast(fit, h=48))
-
+plot(forecast(fit))
+\dontrun{
+taylor.fit<-bats(taylor)
+plot(forecast(taylor.fit))
+}
 }
 
 

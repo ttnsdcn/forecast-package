@@ -27,10 +27,12 @@ the value returned by \code{ets} and associated functions.}
 \author{Rob J Hyndman and Slava Razbash}
 
 \examples{
-air.passengers<-msts(AirPassengers, seasonal.periods=c(4,12,18), ts.frequency=12)
 fit<-bats(air.passengers)
 plot(forecast(fit))
-
+\dontrun{
+taylor.fit<-bats(taylor)
+plot(forecast(taylor.fit))
+}
 }
 
 \keyword{ts}

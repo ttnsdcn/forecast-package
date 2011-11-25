@@ -18,6 +18,9 @@
 
 \author{Rob J Hyndman and Slava Razbash}
 
-\examples{air.passengers<-msts(AirPassengers, seasonal.periods=c(4,12,18), ts.frequency=12, start=start(AirPassengers) ) }
+\examples{
+taylor <- msts(taylor, seasonal.periods=c(48,336), ts.frequency=48, start=2000+22/52)
+air.passengers <- msts(AirPassengers, seasonal.periods=12, ts.frequency=12, start=1949)  
+}
 
 \keyword{ts}
