@@ -3,6 +3,90 @@
 # Author: srazbash
 ###############################################################################
 
+unParameteriseTBATS<-function(param.vector, control) {
+	#print(control)
+	if(control$use.box.cox) {
+		lambda<-param.vector[1]
+		alpha<-param.vector[2]
+		if(control$use.beta) {
+			if(control$use.damping) {
+				small.phi<-param.vector[3]
+				beta<-param.vector[4]
+				gamma.start<-5
+			} else {
+				small.phi<-1
+				beta<-param.vector[3]
+				gamma.start<-4
+			}
+		} else {
+			small.phi<-NULL
+			beta<-NULL
+			gamma.start<-3
+		}
+		if(control$length.gamma > 0) {
+			gamma.one.vector<-param.vector[gamma.start:(gamma.start+(control$length.gamma/2)-1)]
+			gamma.two.vector<-param.vector[(gamma.start+(control$length.gamma/2)):(gamma.start+(control$length.gamma)-1)]
+			final.gamma.pos<-gamma.start+control$length.gamma-1
+		} else {
+			gamma.one.vector<-NULL
+			gamma.two.vector<-NULL
+			final.gamma.pos<-gamma.start-1
+		}
+		if(control$p != 0) {
+			ar.coefs<-param.vector[(final.gamma.pos+1):(final.gamma.pos+control$p)]
+		} else {
+			ar.coefs<-NULL
+		}
+		if(control$q != 0) {
+			ma.coefs<-param.vector[(final.gamma.pos+control$p+1):length(param.vector)]
+		} else {
+			ma.coefs<-NULL
+		}
+	} else {
+		lambda<-NULL
+		alpha<-param.vector[1]
+		if(control$use.beta) {
+			if(control$use.damping) {
+				small.phi<-param.vector[2]
+				beta<-param.vector[3]
+				gamma.start<-4
+			} else {
+				small.phi<-1
+				beta<-param.vector[2]
+				gamma.start<-3
+			}
+		} else {
+			small.phi<-NULL
+			beta<-NULL
+			gamma.start<-2
+		}
+		if(control$length.gamma > 0) {
+			gamma.one.vector<-param.vector[gamma.start:(gamma.start+(control$length.gamma/2)-1)]
+			gamma.two.vector<-param.vector[(gamma.start+(control$length.gamma/2)):(gamma.start+(control$length.gamma)-1)]
+			final.gamma.pos<-gamma.start+control$length.gamma-1
+		} else {
+			gamma.one.vector<-NULL
+			gamma.two.vector<-NULL
+			final.gamma.pos<-gamma.start-1
+		}
+		if(control$p != 0) {
+			ar.coefs<-param.vector[(final.gamma.pos+1):(final.gamma.pos+control$p)]
+		} else {
+			ar.coefs<-NULL
+		}
+		if(control$q != 0) {
+			ma.coefs<-param.vector[(final.gamma.pos+control$p+1):length(param.vector)]
+		} else {
+			ma.coefs<-NULL
+		}
+	}
+	return(list(lambda=lambda, alpha=alpha, beta=beta, small.phi=small.phi, gamma.one.v=gamma.one.vector, gamma.two.v=gamma.two.vector, ar.coefs=ar.coefs, ma.coefs=ma.coefs))
+}
+
+##############################################################################################################################################################################################
+##BATS related stuff below
+########################################
+
 parameterise<-function(alpha, beta.v=NULL, small.phi=1, gamma.v=NULL, lambda=NULL, ar.coefs=NULL, ma.coefs=NULL) {
 	#print("urg")
 	#print(lambda)
