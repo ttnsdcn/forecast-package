@@ -14,17 +14,10 @@ checkAdmissibility<-function(opt.env, box.cox=NULL, small.phi=NULL, ar.coefs=NUL
 	
 	#Check the range of small.phi
 	if(!is.null(small.phi)) {
-		if(tau > 16) {
-			if(((small.phi < .8) | (small.phi > 1))) {
-				print("small.phi-1")
-				return(FALSE)
-			}
-		} else {
-			if(((small.phi < .8) | (small.phi > .98)) & (small.phi != 1)) {
-				print("small.phi-2")
-				return(FALSE)
-			}
+		if(((small.phi < .8) | (small.phi > 1))) {
+			return(FALSE)
 		}
+	
 	}
 	
 	#Check AR part for stationarity
