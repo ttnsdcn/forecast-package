@@ -73,7 +73,7 @@ makeTBATSFMatrix<-function(alpha, beta=NULL, small.phi=NULL, seasonal.periods=NU
 			#print(S)
 			Ai<-.Call("makeAIMatrix", C_s = C, S_s = S, k_s = as.integer(k.vector[i]), PACKAGE = "forecast")
 			A[(last.pos+1):(last.pos+(2*k.vector[i])), (last.pos+1):(last.pos+(2*k.vector[i]))]<-Ai
-			last.pos<-k.vector[i]
+			last.pos<-(2*k.vector[i])
 		}
 		seasonal.row<-cbind(seasonal.row,A)
 		

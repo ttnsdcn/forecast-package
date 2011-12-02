@@ -20,18 +20,18 @@ fitSpecificTBATS<-function(y, use.box.cox, use.beta, use.damping, seasonal.perio
 			q<-0
 		}
 		#Calculate starting values:
-		if(sum(seasonal.periods) > 16) {
-			alpha<-(1e-6)
-		} else {
-			alpha<-.01
-		}
+		#if(sum(seasonal.periods) > 16) {
+			alpha<-5.505490e-03
+		#} else {
+		#	alpha<-.01
+		#}
 		if(use.beta) {
 			adj.beta=1
-			if(sum(seasonal.periods) > 16) {
-				beta.v<-(5e-7)
-			} else {
-				beta.v<-.02
-			}
+			#if(sum(seasonal.periods) > 16) {
+				beta.v<-8.372205e-05
+			#} else {
+			#	beta.v<-.02
+			#}
 			b<-0
 			if(use.damping) {
 				#if(sum(seasonal.periods) > 16) {
@@ -50,8 +50,8 @@ fitSpecificTBATS<-function(y, use.box.cox, use.beta, use.damping, seasonal.perio
 			use.damping=FALSE
 		}
 		if(!is.null(seasonal.periods)) {
-			gamma.one.v<-rep(.001, length(k.vector))
-			gamma.two.v<-rep(.0011, length(k.vector))
+			gamma.one.v<-rep(1.404345e-02, length(k.vector))
+			gamma.two.v<-rep(7.358865e-09, length(k.vector))
 			s.vector<-numeric(2*sum(k.vector))
 			k.vector<-as.integer(k.vector)
 			#for(s in seasonal.periods) {
@@ -214,7 +214,7 @@ fitSpecificTBATS<-function(y, use.box.cox, use.beta, use.damping, seasonal.perio
 		#x.nought.untransformed<-InvBoxCox(x.nought, lambda=lambda)
 		assign("x.nought.untransformed", InvBoxCox(x.nought, lambda=lambda), envir=opt.env)
 		#Optimise the likelihood function
-		optim.like<-optim(par=param.vector$vect, fn=calcLikelihood, method="Nelder-Mead", opt.env=opt.env, use.beta=use.beta, use.small.phi=use.damping, seasonal.periods=seasonal.periods, param.control=param.vector$control, p=p, q=q, tau=tau, control=list(maxit=(100*length(param.vector$vect)^2)))
+		optim.like<-optim(par=param.vector$vect, fn=calcLikelihoodTBATS, method="Nelder-Mead", opt.env=opt.env, use.beta=use.beta, use.small.phi=use.damping, seasonal.periods=seasonal.periods, param.control=param.vector$control, p=p, q=q, tau=tau, control=list(maxit=(100*length(param.vector$vect)^2)))
 		#Get the parameters out of the param.vector
 		paramz<-unParameteriseTBATS(optim.like$par, param.vector$control)
 		lambda<-paramz$lambda
@@ -255,9 +255,9 @@ fitSpecificTBATS<-function(y, use.box.cox, use.beta, use.damping, seasonal.perio
 	} else { #else if we are not using the Box-Cox transformation
 		#Optimise the likelihood function
 		if(length(param.vector$vect) > 1) {
-			optim.like<-optim(par=param.vector$vect, fn=calcLikelihoodNOTransformed, method="Nelder-Mead", opt.env=opt.env, x.nought=x.nought, use.beta=use.beta, use.small.phi=use.damping, seasonal.periods=seasonal.periods, param.control=param.vector$control, p=p, q=q, tau=tau, control=list(maxit=(100*length(param.vector$vect)^2)))
+			optim.like<-optim(par=param.vector$vect, fn=calcLikelihoodNOTransformedTBATS, method="Nelder-Mead", opt.env=opt.env, x.nought=x.nought, use.beta=use.beta, use.small.phi=use.damping, seasonal.periods=seasonal.periods, param.control=param.vector$control, p=p, q=q, tau=tau, control=list(maxit=(100*length(param.vector$vect)^2)))
 		} else {
-			optim.like<-optim(par=param.vector$vect, fn=calcLikelihoodNOTransformed, method="BFGS", opt.env=opt.env, x.nought=x.nought, use.beta=use.beta, use.small.phi=use.damping, seasonal.periods=seasonal.periods, param.control=param.vector$control, p=p, q=q, tau=tau)
+			optim.like<-optim(par=param.vector$vect, fn=calcLikelihoodNOTransformedTBATS, method="BFGS", opt.env=opt.env, x.nought=x.nought, use.beta=use.beta, use.small.phi=use.damping, seasonal.periods=seasonal.periods, param.control=param.vector$control, p=p, q=q, tau=tau)
 		}
 		#Get the parameters out of the param.vector
 		paramz<-unParameterise(optim.like$par, param.vector$control)
@@ -294,15 +294,15 @@ fitSpecificTBATS<-function(y, use.box.cox, use.beta, use.damping, seasonal.perio
 	
 	
 	#Make a list object
-	model.for.output<-list(lambda=lambda, alpha=alpha, beta=beta.v, damping.parameter=small.phi, gamma.one.values=gamma.one.v, gamma.two.values=gamma.two.v, ar.coefficients=ar.coefs, ma.coefficients=ma.coefs, likelihood=likelihood, optim.return.code=optim.like$convergence, variance=variance, AIC=aic, parameters=list(vect=optim.like$par, control=param.vector$control), seed.states=x.nought, e=e, fitted.values=fitted.values, errors=ee, x=fitted.values.and.errors$x, seasonal.periods=seasonal.periods, y=y)
-	class(model.for.output)<-"bats"
+	model.for.output<-list(lambda=lambda, alpha=alpha, beta=beta.v, damping.parameter=small.phi, gamma.one.values=gamma.one.v, gamma.two.values=gamma.two.v, ar.coefficients=ar.coefs, ma.coefficients=ma.coefs, likelihood=likelihood, optim.return.code=optim.like$convergence, variance=variance, AIC=aic, parameters=list(vect=optim.like$par, control=param.vector$control), seed.states=x.nought, e=e, fitted.values=fitted.values, errors=ee, x=fitted.values.and.errors$x, seasonal.periods=seasonal.periods, k.vector=k.vector, y=y, p=p, q=q)
+	class(model.for.output)<-c("tbats","bats")
 	####
 	return(model.for.output)
 }
 
 
 
-calcLikelihood<-function(param.vector, opt.env, use.beta, use.small.phi, seasonal.periods, param.control, p=0, q=0, tau=0) {
+calcLikelihoodTBATS<-function(param.vector, opt.env, use.beta, use.small.phi, seasonal.periods, param.control, p=0, q=0, tau=0) {
 	#param vector should be as follows: Box-Cox.parameter, alpha, beta, small.phi, gamma.vector, ar.coefs, ma.coefs 
 	#Put the components of the param.vector into meaningful individual variables
 	paramz<-unParameteriseTBATS(param.vector, param.control)
@@ -361,7 +361,7 @@ calcLikelihood<-function(param.vector, opt.env, use.beta, use.small.phi, seasona
 	}
 }
 
-calcLikelihoodNOTransformed<-function(param.vector, opt.env, x.nought, use.beta, use.small.phi, seasonal.periods, param.control, p=0, q=0, tau=0) {
+calcLikelihoodNOTransformedTBATS<-function(param.vector, opt.env, x.nought, use.beta, use.small.phi, seasonal.periods, param.control, p=0, q=0, tau=0) {
 	#The likelihood function without the Box-Cox Transformation
 	#param vector should be as follows: alpha, beta, small.phi, gamma.vector, ar.coefs, ma.coefs 
 	#Put the components of the param.vector into meaningful individual variables

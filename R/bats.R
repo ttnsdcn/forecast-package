@@ -12,13 +12,13 @@
 #source("adjustSeasonalSeeds.R", verbose=TRUE)
 #source("getBATS.R", verbose=TRUE)
 
-filterSpecifics<-function(y, box.cox, trend, damping, seasonal.periods, use.arma.errors, ...) {
+filterSpecifics<-function(y, box.cox, trend, damping, seasonal.periods, use.arma.errors, force.seasonality=FALSE, ...) {
 	if((trend == FALSE) & (damping == TRUE)) {
 		return(list(AIC=Inf))
 	}
 	#printCASE(box.cox, trend, damping, seasonal.periods, NULL, NULL, 0, 0)
 	first.model<-fitSpecificBATS(y, use.box.cox=box.cox, use.beta=trend, use.damping=damping, seasonal.periods=seasonal.periods)
-	if(!is.null(seasonal.periods)) {
+	if((!is.null(seasonal.periods)) & (!force.seasonailty)) {
 		#printCASE(box.cox, trend, damping, NULL, NULL, NULL, 0, 0)
 		non.seasonal.model<-fitSpecificBATS(y, use.box.cox=box.cox, use.beta=trend, use.damping=damping, seasonal.periods=NULL)
 		if(first.model$AIC > non.seasonal.model$AIC) {
