@@ -18,7 +18,7 @@ filterSpecifics<-function(y, box.cox, trend, damping, seasonal.periods, use.arma
 	}
 	#printCASE(box.cox, trend, damping, seasonal.periods, NULL, NULL, 0, 0)
 	first.model<-fitSpecificBATS(y, use.box.cox=box.cox, use.beta=trend, use.damping=damping, seasonal.periods=seasonal.periods)
-	if((!is.null(seasonal.periods)) & (!force.seasonailty)) {
+	if((!is.null(seasonal.periods)) & (!force.seasonality)) {
 		#printCASE(box.cox, trend, damping, NULL, NULL, NULL, 0, 0)
 		non.seasonal.model<-fitSpecificBATS(y, use.box.cox=box.cox, use.beta=trend, use.damping=damping, seasonal.periods=NULL)
 		if(first.model$AIC > non.seasonal.model$AIC) {

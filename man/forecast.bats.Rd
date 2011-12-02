@@ -1,11 +1,12 @@
 \name{forecast.bats}
 \alias{forecast.bats}
-\title{Forecasting using BATS models}
+\alias{forecast.tbats}
+\title{Forecasting using BATS and TBATS models}
 
 \usage{forecast(object, h=10, level=c(80,95), fan=FALSE, ts.frequency=max(object$seasonal.periods))}
 
 \arguments{
-\item{object}{A \code{bats} object. The the result of a call to \code{\link{bats}}. }
+\item{object}{A \code{bats} or \code{tbats} object. The the result of a call to \code{\link{bats}}. }
 \item{object}{An object of class "\code{bats}". Usually the result of a call to \code{\link{bats}}.}
 \item{h}{Number of periods for forecasting}
 \item{level}{Confidence level for prediction intervals.}

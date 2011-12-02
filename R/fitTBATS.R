@@ -26,7 +26,7 @@ fitSpecificTBATS<-function(y, use.box.cox, use.beta, use.damping, seasonal.perio
 		#	alpha<-.01
 		#}
 		if(use.beta) {
-			adj.beta=1
+			adj.beta<-1
 			#if(sum(seasonal.periods) > 16) {
 				beta.v<-8.372205e-05
 			#} else {
@@ -43,7 +43,7 @@ fitSpecificTBATS<-function(y, use.box.cox, use.beta, use.damping, seasonal.perio
 				small.phi<-1
 			}
 		} else {
-			adj.beta=0
+			adj.beta<-0
 			beta.v<-NULL
 			b<-NULL
 			small.phi<-NULL
