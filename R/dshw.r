@@ -4,6 +4,9 @@
 
 dshw <- function(y, period1, period2, h=2*max(period1,period2), alpha=NULL, beta=NULL, gamma=NULL, omega=NULL, phi=NULL, lambda=NULL, armethod=TRUE)
 {
+  if(is.null(tsp(y)))
+    y <- ts(y,f=period1)
+  
   if(!armethod)
   {
     phi <- 0
@@ -73,6 +76,7 @@ dshw <- function(y, period1, period2, h=2*max(period1,period2), alpha=NULL, beta
 
 	# Forecasts
   fcast <- (s + (1:h)*t) * rep(I[n+(1:period1)],h/period1 + 1)[1:h] * rep(w[n+(1:period2)],h/period2 + 1)[1:h]
+  fcast <- ts(fcast,f=frequency(y),s=tsp(y)[2]+1/tsp(y)[3])
   
   # Calculate MSE and MAPE
   yhat <- ts(yhat)
@@ -87,7 +91,6 @@ dshw <- function(y, period1, period2, h=2*max(period1,period2), alpha=NULL, beta
 	mse <- mean(e^2)
 	mape <- mean(abs(e)/y)*100
 	
-  fcast <- ts(fcast,f=frequency(y),s=tsp(y)[2]+1/tsp(y)[3])
 
   if(!is.null(lambda))
   {
