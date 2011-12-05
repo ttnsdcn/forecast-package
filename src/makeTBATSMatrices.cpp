@@ -75,15 +75,16 @@ SEXP makeTBATSWMatrix(SEXP smallPhi_s, SEXP kVector_s, SEXP arCoefs_s, SEXP maCo
 	if(!Rf_isNull(arCoefs_s)) {
 		//Rprintf("--10\n");
 		for(R_len_t i = 1; i <= p; i++) {
-			wTranspose(0,(adjustPhi + lengthSeasonal +i)) = arCoefs[(i-1)];
+			wTranspose(0,(adjustPhi + *tau +i)) = arCoefs[(i-1)];
 		}
 	}
 
 	if(!Rf_isNull(maCoefs_s)) {
 		//Rprintf("--11\n");
 			for(R_len_t i = 1; i <= q; i++) {
-				wTranspose(0,(adjustPhi + lengthSeasonal + p + i)) = maCoefs[(i-1)];
+				wTranspose(0,(adjustPhi + *tau + p + i)) = maCoefs[(i-1)];
 			}
+
 	}
 	///Rprintf("--12\n");
 	arma::mat w = arma::trans(wTranspose);
