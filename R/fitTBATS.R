@@ -9,6 +9,8 @@ fitSpecificTBATS<-function(y, use.box.cox, use.beta, use.damping, seasonal.perio
 	#print(use.damping)
 	#print(seasonal.periods)
 	#print(k.vector)
+	#print(ar.coefs)
+	#print(ma.coefs)
 	#print("####################")
 	if(!is.null(seasonal.periods)) {
 		seasonal.periods<-as.integer(sort(seasonal.periods))
@@ -246,8 +248,8 @@ fitSpecificTBATS<-function(y, use.box.cox, use.beta, use.damping, seasonal.perio
 			p<-0
 		}
 		if(!is.null(paramz$ma.coefs)) {
-			q<-length(ma.coefs)
 			ma.coefs<-matrix(paramz$ma.coefs, nrow=1, ncol=q)
+			q<-length(ma.coefs)
 		} else {
 			ma.coefs<-NULL
 			q<-0
@@ -312,8 +314,8 @@ fitSpecificTBATS<-function(y, use.box.cox, use.beta, use.damping, seasonal.perio
 			p<-0
 		}
 		if(!is.null(paramz$ma.coefs)) {
-			q<-length(ma.coefs)
 			ma.coefs<-matrix(paramz$ma.coefs, nrow=1, ncol=q)
+			q<-length(ma.coefs)
 		} else {
 			ma.coefs<-NULL
 			q<-0
@@ -382,8 +384,8 @@ calcLikelihoodTBATS<-function(param.vector, opt.env, use.beta, use.small.phi, se
 		p<-0
 	}
 	if(!is.null(paramz$ma.coefs)) {
-		q<-length(ma.coefs)
 		ma.coefs<-matrix(paramz$ma.coefs, nrow=1, ncol=q)
+		q<-length(ma.coefs)
 	} else {
 		ma.coefs<-NULL
 		q<-0
@@ -447,8 +449,8 @@ calcLikelihoodNOTransformedTBATS<-function(param.vector, opt.env, x.nought, use.
 	}
 
 	if(!is.null(paramz$ma.coefs)) {
-		q<-length(ma.coefs)
 		ma.coefs<-matrix(paramz$ma.coefs, nrow=1, ncol=q)
+		q<-length(ma.coefs)
 		
 	} else {
 		ma.coefs<-NULL

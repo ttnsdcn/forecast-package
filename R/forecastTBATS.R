@@ -25,19 +25,19 @@ forecast.tbats<-function(object, h=10, level=c(80,95), fan=FALSE, ts.frequency=(
 		adj.beta<-0
 	}
 	
-	w<-.Call("makeTBATSWMatrix", smallPhi_s = object$damping.parameter, kVector_s=objectc$k.vector, arCoefs_s = object$ar.coefficients, maCoefs_s = object$ma.coefficients, tau_s=tau, PACKAGE = "forecast")
+	w<-.Call("makeTBATSWMatrix", smallPhi_s = object$damping.parameter, kVector_s=as.integer(object$k.vector), arCoefs_s = object$ar.coefficients, maCoefs_s = object$ma.coefficients, tau_s=as.integer(tau), PACKAGE = "forecast")
 	
 	if(!is.null(object$seasonal.periods)) {
 		gamma.bold<-matrix(0,nrow=1,ncol=tau)
-		.Call("updateTBATSGammaBold", gammaBold_s=gamma.bold, kVector_s=k.vector, gammaOne_s=gamma.one.v, gammaTwo_s=gamma.two.v, PACKAGE = "forecast")
+		.Call("updateTBATSGammaBold", gammaBold_s=gamma.bold, kVector_s=as.integer(object$k.vector), gammaOne_s=object$gamma.one.v, gammaTwo_s=object$gamma.two.v, PACKAGE = "forecast")
 	} else {
 		gamma.bold<-NULL	
 	}
 	g<-matrix(0, nrow=(tau+1+adj.beta+object$p+object$q), ncol=1)
-	.Call("updateTBATSGMatrix", g_s=g, gammaBold_s=gamma.bold, alpha_s=alpha, beta_s=beta.v, PACKAGE = "forecast")
+	.Call("updateTBATSGMatrix", g_s=g, gammaBold_s=gamma.bold, alpha_s=object$alpha, beta_s=object$beta.v, PACKAGE = "forecast")
 	
 	
-	F<-makeTBATSFMatrix(alpha=object$alpha, beta=object$beta, small.phi=object$damping.parameter, seasonal.periods=object$seasonal.periods, k.vector=k.vector, gamma.bold.matrix=gamma.bold, ar.coefs=object$ar.coefficients, ma.coefs=object$ma.coefficients)
+	F<-makeTBATSFMatrix(alpha=object$alpha, beta=object$beta, small.phi=object$damping.parameter, seasonal.periods=object$seasonal.periods, k.vector=as.integer(object$k.vector), gamma.bold.matrix=gamma.bold, ar.coefs=object$ar.coefficients, ma.coefs=object$ma.coefficients)
 	
 	y.forecast[1]<-w$w.transpose %*% object$x[,ncol(object$x)]
 	x[,1]<- F %*% object$x[,ncol(object$x)] + g %*% object$e[length(object$e)]
