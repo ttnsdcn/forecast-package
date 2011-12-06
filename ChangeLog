@@ -1,10 +1,12 @@
-Version 3.14 (5 December 2011)
+Version 3.14 (?? December 2011)
   * Improved documentation for forecast.ts()
   * Corrected bug in dshw() when applied to a non-ts object.
   * Added msts object class for multiple seasonal time series
   * Made taylor data set an msts object.
   * Added bats() function for multiple seasonal time series modelling
   * Added forecast.bats() function for forecasting BATS models
+  * Byte compiling turned on
+  * Depending on Rcpp and RcppArmadillo to speed some code up.
 
 Version 3.13 (19 November 2011)
   * Bug fix for forecast.StructTS() due to changes in the StructTS object. The default h was being set to 0.
