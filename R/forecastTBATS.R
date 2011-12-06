@@ -96,7 +96,7 @@ forecast.tbats<-function(object, h=10, level=c(80,95), fan=FALSE, ts.frequency=(
 	fitted.values<-msts(object$fitted.values, seasonal.periods=(if(!is.null(object$seasonal.periods)) { object$seasonal.periods} else { 1}), start=object$start.time)
 	y.forecast<-msts(y.forecast, seasonal.periods=(if(!is.null(object$seasonal.periods)) { object$seasonal.periods} else { 1}), start=fcast.start.time)
 		
-	forecast.object<-list(model=object, mean=y.forecast, level=level, x=x, upper=upper.bounds, lower=lower.bounds, fitted=fitted.values, method=makeText(object), residuals=object$e)
+	forecast.object<-list(model=object, mean=y.forecast, level=level, x=x, upper=upper.bounds, lower=lower.bounds, fitted=fitted.values, method=makeTextTBATS(object), residuals=object$e)
 	class(forecast.object)<-"forecast"
 	return(forecast.object)
 }

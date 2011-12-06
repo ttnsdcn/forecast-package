@@ -3,15 +3,17 @@
 # Author: srazbash
 ###############################################################################
 fitSpecificTBATS<-function(y, use.box.cox, use.beta, use.damping, seasonal.periods=NULL, k.vector=NULL, starting.params=NULL, x.nought=NULL, ar.coefs=NULL, ma.coefs=NULL) {
-	#print("options:")
-	#print(use.box.cox)
-	#print(use.beta)
-	#print(use.damping)
-	#print(seasonal.periods)
-	#print(k.vector)
-	#print(ar.coefs)
-	#print(ma.coefs)
-	#print("####################")
+	#if((!use.damping) & (use.beta)) {
+	#	print("options:")
+	#	print(use.box.cox)
+	#	print(use.beta)
+	#	print(use.damping)
+	#	print(seasonal.periods)
+	#	print(k.vector)
+	#	print(ar.coefs)
+	#	print(ma.coefs)
+	#	print("####################")
+	#}
 	if(!is.null(seasonal.periods)) {
 		seasonal.periods<-as.integer(sort(seasonal.periods))
 	}
@@ -370,7 +372,9 @@ fitSpecificTBATS<-function(y, use.box.cox, use.beta, use.damping, seasonal.perio
 	model.for.output<-list(lambda=lambda, alpha=alpha, beta=beta.v, damping.parameter=small.phi, gamma.one.values=gamma.one.v, gamma.two.values=gamma.two.v, ar.coefficients=ar.coefs, ma.coefficients=ma.coefs, likelihood=likelihood, optim.return.code=optim.like$convergence, variance=variance, AIC=aic, parameters=list(vect=optim.like$par, control=param.vector$control), seed.states=x.nought, e=e, fitted.values=fitted.values, errors=ee, x=fitted.values.and.errors$x, seasonal.periods=seasonal.periods, k.vector=k.vector, y=y, p=p, q=q)
 	class(model.for.output)<-c("tbats","bats")
 	####
-	
+	#if((!use.damping) & (use.beta)) {
+	#	print(aic)	
+	#}
 	return(model.for.output)
 }
 
