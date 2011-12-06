@@ -34,8 +34,15 @@ forecast.tbats<-function(object, h=10, level=c(80,95), fan=FALSE, ts.frequency=(
 		gamma.bold<-NULL	
 	}
 	g<-matrix(0, nrow=(tau+1+adj.beta+object$p+object$q), ncol=1)
+	if(object$p != 0) {
+		g[(1+adj.beta+tau+1),1]<-1
+	}
+	if(object$q != 0) {
+		g[(1+adj.beta+tau+object$p+1),1]<-1
+	}
 	.Call("updateTBATSGMatrix", g_s=g, gammaBold_s=gamma.bold, alpha_s=object$alpha, beta_s=object$beta.v, PACKAGE = "forecast")
 	
+	#print(g)
 	
 	F<-makeTBATSFMatrix(alpha=object$alpha, beta=object$beta, small.phi=object$damping.parameter, seasonal.periods=object$seasonal.periods, k.vector=as.integer(object$k.vector), gamma.bold.matrix=gamma.bold, ar.coefs=object$ar.coefficients, ma.coefs=object$ma.coefficients)
 	

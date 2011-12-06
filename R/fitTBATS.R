@@ -145,13 +145,21 @@ fitSpecificTBATS<-function(y, use.box.cox, use.beta, use.damping, seasonal.perio
 		gamma.bold<-NULL	
 	}
 	g<-matrix(0, nrow=((2*sum(k.vector))+1+adj.beta+p+q), ncol=1)
+	if(p != 0) {
+		g[(1+adj.beta+tau+1),1]<-1
+	}
+	if(q != 0) {
+		g[(1+adj.beta+tau+p+1),1]<-1
+	}
 	#print("A:")
-	#print(g)
+	
 	#print(gamma.bold)
 	#print(alpha)
 	#print(beta.v)
 	.Call("updateTBATSGMatrix", g_s=g, gammaBold_s=gamma.bold, alpha_s=alpha, beta_s=beta.v, PACKAGE = "forecast")
-	
+	#if(!is.null(ar.coefs) | !is.null(ma.coefs)) {
+	#	print(g)
+	#}
 	#print("past A")
 	F<-makeTBATSFMatrix(alpha=alpha, beta=beta.v, small.phi=small.phi, seasonal.periods=seasonal.periods, k.vector=k.vector, gamma.bold.matrix=gamma.bold, ar.coefs=ar.coefs, ma.coefs=ma.coefs)
 	#print(F)
@@ -271,7 +279,9 @@ fitSpecificTBATS<-function(y, use.box.cox, use.beta, use.damping, seasonal.perio
 		#print(alpha)
 		#print(beta.v)
 		.Call("updateTBATSGMatrix", g_s=g, gammaBold_s=gamma.bold, alpha_s=alpha, beta_s=beta.v, PACKAGE = "forecast")
-			
+		#if(!is.null(ar.coefs) | !is.null(ma.coefs)) {
+		#	print(g)
+		#}
 		.Call("updateFMatrix", F, small.phi, alpha, beta.v, gamma.bold, ar.coefs, ma.coefs, tau, PACKAGE="forecast")
 		
 		#print("here!")
@@ -338,7 +348,9 @@ fitSpecificTBATS<-function(y, use.box.cox, use.beta, use.damping, seasonal.perio
 		#print(alpha)
 		#print(beta.v)
 		.Call("updateTBATSGMatrix", g_s=g, gammaBold_s=gamma.bold, alpha_s=alpha, beta_s=beta.v, PACKAGE = "forecast")
-		#print("F:")
+		#if(!is.null(ar.coefs) | !is.null(ma.coefs)) {
+		#	print(g)
+		#}
 		.Call("updateFMatrix", F, small.phi, alpha, beta.v, gamma.bold, ar.coefs, ma.coefs, tau, PACKAGE="forecast")
 		#print("calc")
 		#2. Calculate!
