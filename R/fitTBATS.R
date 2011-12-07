@@ -4,15 +4,15 @@
 ###############################################################################
 fitSpecificTBATS<-function(y, use.box.cox, use.beta, use.damping, seasonal.periods=NULL, k.vector=NULL, starting.params=NULL, x.nought=NULL, ar.coefs=NULL, ma.coefs=NULL) {
 	#if((!use.damping) & (use.beta)) {
-	#	print("options:")
-	#	print(use.box.cox)
-	#	print(use.beta)
-	#	print(use.damping)
-	#	print(seasonal.periods)
-	#	print(k.vector)
-	#	print(ar.coefs)
-	#	print(ma.coefs)
-	#	print("####################")
+		print("options:")
+		print(use.box.cox)
+		print(use.beta)
+		print(use.damping)
+		print(seasonal.periods)
+		print(k.vector)
+		print(ar.coefs)
+		print(ma.coefs)
+		print("####################")
 	#}
 	if(!is.null(seasonal.periods)) {
 		seasonal.periods<-as.integer(sort(seasonal.periods))
@@ -32,14 +32,14 @@ fitSpecificTBATS<-function(y, use.box.cox, use.beta, use.damping, seasonal.perio
 		}
 		#Calculate starting values:
 		#if(sum(seasonal.periods) > 16) {
-			alpha<-.1
+			alpha<-.2
 		#} else {
 		#	alpha<-.01
 		#}
 		if(use.beta) {
 			adj.beta<-1
 			#if(sum(seasonal.periods) > 16) {
-				beta.v<-.2
+				beta.v<-.1
 			#} else {
 			#	beta.v<-.02
 			#}
@@ -373,7 +373,9 @@ fitSpecificTBATS<-function(y, use.box.cox, use.beta, use.damping, seasonal.perio
 	class(model.for.output)<-c("tbats","bats")
 	####
 	#if((!use.damping) & (use.beta)) {
-	#	print(aic)	
+		print("@@@@AIC:")
+		print(aic)	
+		print("@@@@@@@")
 	#}
 	return(model.for.output)
 }
@@ -383,6 +385,9 @@ fitSpecificTBATS<-function(y, use.box.cox, use.beta, use.damping, seasonal.perio
 calcLikelihoodTBATS<-function(param.vector, opt.env, use.beta, use.small.phi, seasonal.periods, param.control, p=0, q=0, tau=0) {
 	#param vector should be as follows: Box-Cox.parameter, alpha, beta, small.phi, gamma.vector, ar.coefs, ma.coefs 
 	#Put the components of the param.vector into meaningful individual variables
+	print("&&&&&&&&&&& Param Vector:")
+	print(param.vector)
+	print("&&&&&&&&&&&&&&")
 	paramz<-unParameteriseTBATS(param.vector, param.control)
 	box.cox.parameter<-paramz$lambda
 	alpha<-paramz$alpha
@@ -447,6 +452,9 @@ calcLikelihoodNOTransformedTBATS<-function(param.vector, opt.env, x.nought, use.
 	#The likelihood function without the Box-Cox Transformation
 	#param vector should be as follows: alpha, beta, small.phi, gamma.vector, ar.coefs, ma.coefs 
 	#Put the components of the param.vector into meaningful individual variables
+	print("&&&&&&&&&&& Param Vector:")
+	print(param.vector)
+	print("&&&&&&&&&&&&&&")
 	paramz<-unParameteriseTBATS(param.vector, param.control)
 	box.cox.parameter<-paramz$lambda
 	alpha<-paramz$alpha

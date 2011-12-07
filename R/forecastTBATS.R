@@ -130,8 +130,14 @@ makeTextTBATS<-function(object) {
 	
 	if(!is.null(object$seasonal.periods)) {
 		name<-paste(name, "}, { ", sep="")
+		k.pos<-1
 		for(i in object$seasonal.periods) {
+			name<-paste(name, "< ", sep="")
+			name<-paste(name, object$k.vector[k.pos], sep="")
+			name<-paste(name, ", ", sep="")
 			name<-paste(name, i, sep="")
+			name<-paste(name, " >", sep="")
+			k.pos<-k.pos+1
 			if(i != object$seasonal.periods[length(object$seasonal.periods)]) {
 				name<-paste(name, ", ", sep="")
 			} else {

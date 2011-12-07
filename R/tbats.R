@@ -224,8 +224,14 @@ print.tbats<-function(object) {
 	
 	if(!is.null(object$seasonal.periods)) {
 		cat("}, { ")
+		k.pos<-1
 		for(i in object$seasonal.periods) {
+			cat("< ")
+			cat(object$k.vector[k.pos])
+			cat(", ")
 			cat(i)
+			cat(" >")
+			k.pos<-k.pos+1
 			if(i != object$seasonal.periods[length(object$seasonal.periods)]) {
 				cat(", ")
 			} else {
@@ -233,7 +239,7 @@ print.tbats<-function(object) {
 			}
 		}
 	} else {
-		cat("})\n\n")	
+		cat("{)\n\n")	
 	}
 	cat("\nCall: ")
 	print(object$call)
