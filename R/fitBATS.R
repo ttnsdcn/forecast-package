@@ -23,13 +23,13 @@ fitSpecificBATS<-function(y, use.box.cox, use.beta, use.damping, seasonal.period
 		if(sum(seasonal.periods) > 16) {
 			alpha<-(1e-6)
 		} else {
-			alpha<-.01
+			alpha<-.02
 		}
 		if(use.beta) {
 			if(sum(seasonal.periods) > 16) {
 				beta.v<-(5e-7)
 			} else {
-				beta.v<-.02
+				beta.v<-.01
 			}
 			b<-0
 			if(use.damping) {

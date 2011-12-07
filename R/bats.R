@@ -109,6 +109,9 @@ bats <- function(y, use.box.cox=NULL, use.trend=NULL, use.damped.trend=NULL, sea
 	}
 	best.model$call <- match.call()
 	best.model$start.time <- start.time
+	if(best.model$optim.return.code != 0) {
+		warning("optim() did not converge.")
+	}
 	return(best.model)
 }
 
