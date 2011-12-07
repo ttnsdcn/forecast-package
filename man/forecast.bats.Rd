@@ -2,14 +2,14 @@
 \alias{forecast.bats}
 \title{Forecasting using BATS models}
 
-\usage{forecast(object, h=10, level=c(80,95), fan=FALSE, ts.frequency=max(object$seasonal.periods))}
+\usage{\method{forecast}{bats}(object, h=10, level=c(80,95), fan=FALSE, ...)}
 
 \arguments{
-\item{object}{A \code{bats} object. The the result of a call to \code{\link{bats}}. }
 \item{object}{An object of class "\code{bats}". Usually the result of a call to \code{\link{bats}}.}
 \item{h}{Number of periods for forecasting}
 \item{level}{Confidence level for prediction intervals.}
-\item{fan}{If TRUE, level is set to seq(50,99,by=1). This is suitable for fan plots.}
+\item{fan}{If TRUE, level is set to \code{seq(50,99,by=1)}. This is suitable for fan plots.}
+\item{...}{Other arguments, currently ignored.}
 }
 
 \description{Forecasts \code{h} steps ahead with a BATS model. Prediction intervals are also produced.}
@@ -34,18 +34,18 @@ An object of class \code{"forecast"} is a list containing at least the following
 \item{fitted}{Fitted values (one-step forecasts)}
 }
 
-\references{De Livera, A.M., Hyndman, R.J., & Snyder, R. D. (2010), Forecasting time series with complex seasonal patterns using exponential smoothing, Journal of the American Statistical Association, to appear.
+\references{De Livera, A.M., Hyndman, R.J., & Snyder, R. D. (2012), Forecasting time series with complex seasonal patterns using exponential smoothing, \emph{Journal of the American Statistical Association}, to appear.
 }
 
-\seealso{\code{\link{bats}}, \code{forecast.ets}.}
+\seealso{\code{\link{bats}}, \code{\link{forecast.ets}}.}
 
 \author{Rob J Hyndman and Slava Razbash}
 
 \examples{
-fit<-bats(air.passengers)
+fit <- bats(USAccDeaths)
 plot(forecast(fit))
 \dontrun{
-taylor.fit<-bats(taylor)
+taylor.fit <- bats(taylor)
 plot(forecast(taylor.fit))
 }
 }
