@@ -4,6 +4,8 @@
 
 dshw <- function(y, period1=NULL, period2=NULL, h=2*max(period1,period2), alpha=NULL, beta=NULL, gamma=NULL, omega=NULL, phi=NULL, lambda=NULL, armethod=TRUE)
 {
+  if(min(y,na.rm=TRUE) <= 0)
+    stop("dshw not suitable when data contain zeros or negative numbers")
   if(any(class(y) == "msts") & (length(attr(y, "msts")) == 2)) {
 	  period1<-as.integer(sort(attr(y, "msts"))[1])
 	  period2<-as.integer(sort(attr(y, "msts"))[2])
@@ -25,7 +27,10 @@ dshw <- function(y, period1=NULL, period2=NULL, h=2*max(period1,period2), alpha=
   }
   
   if(period1 < 1 | period1 == period2)
-  stop("Inappropriate periods")
+    stop("Inappropriate periods") 
+  ratio <- period2/period1
+  if(ratio-trunc(ratio) > 1e-10)
+    stop("Seasonal periods are not nested")
 
   if (!is.null(lambda))
   {
@@ -63,7 +68,7 @@ dshw <- function(y, period1=NULL, period2=NULL, h=2*max(period1,period2), alpha=
   ## Starting values
   I <- sindex(y,period1)
   wstart <- sindex(y,period2)
-  wstart <- wstart / rep(I,(length(wstart)/length(I)))
+  wstart <- wstart / rep(I,ratio)
   w <- wstart
   x <- c(0,diff(y[1:period2]))
   t <- t.start <- mean(((y[1:period2]- y[(period2+1):(2*period2)])/period2 ) + x )/2
