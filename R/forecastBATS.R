@@ -64,6 +64,9 @@ forecast.bats <- function(object, h=10, level=c(80,95), fan=FALSE, ...)
 	{
 		y.forecast <- InvBoxCox(y.forecast,object$lambda)
 		lower.bounds <- InvBoxCox(lower.bounds,object$lambda)
+		if(object$lambda < 1) {
+			lower.bounds<-pmax(lower.bounds, 0)	
+		}
 		upper.bounds <- InvBoxCox(upper.bounds,object$lambda)
 	}
 	##Calc a start time for the forecast
@@ -105,11 +108,11 @@ makeText <- function(object) {
 	if(!is.null(object$damping.parameter)) {
 		name <- paste(name, round(object$damping.parameter, digits=6), sep="")
 	} else {
-		name <- paste(name, "0", sep="")
+		name <- paste(name, "-", sep="")
 	}
 	
 	if(!is.null(object$seasonal.periods)) {
-		name <- paste(name, "}, { ", sep="")
+		name <- paste(name, "}, {", sep="")
 		for(i in object$seasonal.periods) {
 			name <- paste(name, i, sep="")
 			if(i != object$seasonal.periods[length(object$seasonal.periods)]) {
