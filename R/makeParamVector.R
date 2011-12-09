@@ -85,13 +85,28 @@ unParameteriseTBATS<-function(param.vector, control) {
 
 makeParscale<-function(control) {
 	if(control$use.box.cox) {
-		parscale<-c(LAMBDA, 1)
+		parscale<-c(1, 1)
+		gamma.start<-3
+	} else {
+		parscale<-1
+		gamma.start<-2
 	}
 	if(control$use.beta) {
-	 if(control$use.damping) {
-		 
-	 }
+		if(control$use.damping) {
+			parscale<-c(parscale, 1e-2, 1e-1)
+			gamma.start<-gamma.start+2
+		} else {
+			parscale<-c(parscale, 1e-2)
+			gamma.start<-gamma.start+1
+		}
 	}
+	if(control$length.gamma > 0) {
+		parscale<-c(parscale, rep(1e-5, control$length.gamma))	
+	}
+	if((control$p != 0) | (control$p != 0)) {
+		parscale<-c(parscale, rep(1e-1, (control$p + control$q)))
+	}
+	return(parscale)
 }
 
 ##############################################################################################################################################################################################
