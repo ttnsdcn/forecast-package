@@ -1,4 +1,4 @@
-Version 3.14 (8 December 2011)
+Version 3.14 (9 December 2011)
   * Improved documentation for forecast.ts()
   * Corrected bug in dshw() when applied to a non-ts object.
   * Added error message when dshw() applied to data containing zeros or negative values
