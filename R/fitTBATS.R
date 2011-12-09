@@ -5,13 +5,13 @@
 fitSpecificTBATS<-function(y, use.box.cox, use.beta, use.damping, seasonal.periods=NULL, k.vector=NULL, starting.params=NULL, x.nought=NULL, ar.coefs=NULL, ma.coefs=NULL) {
 	#if((!use.damping) & (use.beta)) {
 		print("options:")
-		print(use.box.cox)
-		print(use.beta)
-		print(use.damping)
-		print(seasonal.periods)
+		#print(use.box.cox)
+		#print(use.beta)
+		#print(use.damping)
+		#print(seasonal.periods)
 		print(k.vector)
-		print(ar.coefs)
-		print(ma.coefs)
+		#print(ar.coefs)
+		#print(ma.coefs)
 		print("####################")
 	#}
 	if(!is.null(seasonal.periods)) {

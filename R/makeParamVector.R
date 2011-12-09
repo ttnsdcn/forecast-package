@@ -83,6 +83,17 @@ unParameteriseTBATS<-function(param.vector, control) {
 	return(list(lambda=lambda, alpha=alpha, beta=beta, small.phi=small.phi, gamma.one.v=gamma.one.vector, gamma.two.v=gamma.two.vector, ar.coefs=ar.coefs, ma.coefs=ma.coefs))
 }
 
+makeParscale<-function(control) {
+	if(control$use.box.cox) {
+		parscale<-c(LAMBDA, 1)
+	}
+	if(control$use.beta) {
+	 if(control$use.damping) {
+		 
+	 }
+	}
+}
+
 ##############################################################################################################################################################################################
 ##BATS related stuff below
 ########################################

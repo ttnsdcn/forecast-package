@@ -7,7 +7,7 @@ checkAdmissibility<-function(opt.env, box.cox=NULL, small.phi=NULL, ar.coefs=NUL
 	#Check the range of the Box-Cox parameter
 	if(!is.null(box.cox)) {
 		if((box.cox < 0) | (box.cox > 1.5)) {
-			print("box-cox")
+			#print("box-cox")
 			return(FALSE)
 		}
 	}
@@ -15,7 +15,7 @@ checkAdmissibility<-function(opt.env, box.cox=NULL, small.phi=NULL, ar.coefs=NUL
 	#Check the range of small.phi
 	if(!is.null(small.phi)) {
 		if(((small.phi < .8) | (small.phi > 1))) {
-			print("small-phi")
+			#print("small-phi")
 			return(FALSE)
 		}
 	
@@ -66,7 +66,7 @@ checkAdmissibility<-function(opt.env, box.cox=NULL, small.phi=NULL, ar.coefs=NUL
 	#D.eigen.values<-eigen(opt.env$D, only.values=TRUE)$values
 	D.eigen.values<-.Call("La_rg", opt.env$D, TRUE, PACKAGE = "base")$values
 	#print(D.eigen.values)
-	print(abs(D.eigen.values))
+	#print(abs(D.eigen.values))
 	#print("HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 	return(all(abs(D.eigen.values) < 1+1e-10))
 	
