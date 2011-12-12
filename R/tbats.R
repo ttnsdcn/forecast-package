@@ -53,7 +53,8 @@ tbats<-function(y, use.box.cox=NULL, use.trend=NULL, use.damped.trend=NULL, seas
 	k.vector<-rep(1, length(seasonal.periods))
 	n<-length(y)
 	for(i in 1:length(seasonal.periods)) {
-		seasonals[,i]<-as.numeric(bats.states[(1+adj.beta+previous.season+seasonal.periods[i])])
+		seasonals[,i]<-as.numeric(bats.states[(1+adj.beta+previous.season+seasonal.periods[i]),])
+		print((1+adj.beta+previous.season+seasonal.periods[i]))
 		p.val<-0
 		fourier.terms<-makeSingleFourier(1, seasonal.periods[i], n)
 		previous.sse<-sum(residuals(lm(seasonals[,i] ~ fourier.terms -1))^2)
@@ -74,7 +75,9 @@ tbats<-function(y, use.box.cox=NULL, use.trend=NULL, use.damped.trend=NULL, seas
 				four.terms<-cbind(four.terms, new.four.terms)
 			}
 		}
+		previous.season<-previous.season+seasonal.periods[i]
 	}
+	print(k.vector)
 	best.model<-fitSpecificTBATS(y, model.params[1], model.params[2], model.params[3], seasonal.periods, k.vector)
 	for(i in 1:length(seasonal.periods)) {
 		repeat {

@@ -84,6 +84,7 @@ unParameteriseTBATS<-function(param.vector, control) {
 }
 
 makeParscale<-function(control) {
+	#print(control)
 	if(control$use.box.cox) {
 		parscale<-c(1, 1)
 		gamma.start<-3
@@ -103,9 +104,11 @@ makeParscale<-function(control) {
 	if(control$length.gamma > 0) {
 		parscale<-c(parscale, rep(1e-5, control$length.gamma))	
 	}
-	if((control$p != 0) | (control$p != 0)) {
+	
+	if((control$p != 0) | (control$q != 0)) {
 		parscale<-c(parscale, rep(1e-1, (control$p + control$q)))
 	}
+	#print(parscale)
 	return(parscale)
 }
 

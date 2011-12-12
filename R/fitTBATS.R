@@ -4,15 +4,15 @@
 ###############################################################################
 fitSpecificTBATS<-function(y, use.box.cox, use.beta, use.damping, seasonal.periods=NULL, k.vector=NULL, starting.params=NULL, x.nought=NULL, ar.coefs=NULL, ma.coefs=NULL) {
 	#if((!use.damping) & (use.beta)) {
-		print("options:")
+		#print("options:")
 		#print(use.box.cox)
 		#print(use.beta)
 		#print(use.damping)
 		#print(seasonal.periods)
-		print(k.vector)
+		#print(k.vector)
 		#print(ar.coefs)
 		#print(ma.coefs)
-		print("####################")
+		#print("####################")
 	#}
 	if(!is.null(seasonal.periods)) {
 		seasonal.periods<-as.integer(sort(seasonal.periods))
@@ -32,14 +32,16 @@ fitSpecificTBATS<-function(y, use.box.cox, use.beta, use.damping, seasonal.perio
 		}
 		#Calculate starting values:
 		#if(sum(seasonal.periods) > 16) {
-			alpha<-.2
+			#alpha<-0.05638082
+			alpha<-.01
 		#} else {
 		#	alpha<-.01
 		#}
 		if(use.beta) {
 			adj.beta<-1
 			#if(sum(seasonal.periods) > 16) {
-				beta.v<-.01
+				#beta.v<-1.178782e-05
+				beta.v<-0
 			#} else {
 			#	beta.v<-.02
 			#}
@@ -373,9 +375,9 @@ fitSpecificTBATS<-function(y, use.box.cox, use.beta, use.damping, seasonal.perio
 	class(model.for.output)<-c("tbats","bats")
 	####
 	#if((!use.damping) & (use.beta)) {
-		print("@@@@AIC:")
-		print(aic)	
-		print("@@@@@@@")
+		#print("@@@@AIC:")
+		#print(aic)	
+		#print("@@@@@@@")
 	#}
 	return(model.for.output)
 }
