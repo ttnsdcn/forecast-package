@@ -80,19 +80,56 @@ tbats<-function(y, use.box.cox=NULL, use.trend=NULL, use.damped.trend=NULL, seas
 	print(k.vector)
 	best.model<-fitSpecificTBATS(y, model.params[1], model.params[2], model.params[3], seasonal.periods, k.vector)
 	for(i in 1:length(seasonal.periods)) {
-		repeat {
-			if((2*(k.vector[i]+1)) >= (seasonal.periods[i]-1)) {
-				break
+		max.k<-floor(((seasonal.periods[i]-1)/2))
+		#repeat {
+			if(k.vector[i] == max.k) {
+				next
 			}
-			k.vector[i]<-k.vector[i]+1
-			new.model<-fitSpecificTBATS(y, model.params[1], model.params[2], model.params[3], seasonal.periods, k.vector)
-			if(new.model$AIC >= best.model$AIC) {
-				k.vector[i]<-k.vector[i]-1
-				break
-			} else {
-				best.model<-new.model
+			if(max.k <= 6) {
+				old.k<-k.vector[i]
+				k.vector[i]<-max.k
+				repeat {
+					new.model<-fitSpecificTBATS(y, model.params[1], model.params[2], model.params[3], seasonal.periods, k.vector)
+					if(new.model$AIC >= best.model$AIC) {
+						k.vector[i]<-old.k
+						break
+					} else {
+						old.k<-k.vector[i]
+						k.vector[i]<-k.vector[i]-1
+						best.model<-new.model
+					}
+				}
+				print("here-db")
+				next
 			}
-		}
+			if(k.vector[i] >= 6) {
+				k.vector[i]<-k.vector[i]+1
+				new.model<-fitSpecificTBATS(y, model.params[1], model.params[2], model.params[3], seasonal.periods, k.vector)
+				if(new.model$AIC >= best.model$AIC) {
+					k.vector[i]<-k.vector[i]-1
+					break
+				} else {
+					best.model<-new.model
+				}
+			} else if(max.k > 6) {
+				#step.up.k<-k.vector
+				#step.down.k<-k.vector
+				#step.up.k[i]<-7
+				#step.down.k[i]<-5
+				
+				#up.model<-fitSpecificTBATS(y, model.params[1], model.params[2], model.params[3], seasonal.periods, step.up.k)
+				#down.model<-fitSpecificTBATS(y, model.params[1], model.params[2], model.params[3], seasonal.periods, step.down.k)
+				
+				#if(up.model$AIC < down.model$AIC) {
+					
+				#} else {
+				#	if(down.model$AIC < best.model$AIC)
+				#}
+				
+				
+			}
+			
+		#}
 	}
 	aux.model<-best.model
 	if(non.seasonal.model$AIC < best.model$AIC) {
