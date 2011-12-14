@@ -224,7 +224,7 @@ fitSpecificTBATS<-function(y, use.box.cox, use.beta, use.damping, seasonal.perio
 			x.nought<-rbind(x.nought, arma.seed.states)
 		}
 #	}
-	
+	#print(x.nought)
 	
 	#print("on1-A")
 	##Optimisation

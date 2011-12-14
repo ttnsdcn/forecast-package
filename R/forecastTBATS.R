@@ -13,7 +13,7 @@ forecast.tbats<-function(object, h=10, level=c(80,95), fan=FALSE, ts.frequency=(
 	}
 	
 	if(!is.null(object$k.vector)) {
-		tau<-2*object$k.vector
+		tau<-2*sum(object$k.vector)
 	} else {
 		tau<-0
 	}
