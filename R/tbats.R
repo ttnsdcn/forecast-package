@@ -21,7 +21,7 @@ tbats <- function(y, use.box.cox=NULL, use.trend=NULL, use.damped.trend=NULL, se
 	}
 	y <- as.numeric(y)
 	if(is.null(seasonal.periods)) {
-		return(not.seasonal.model)
+		return(non.seasonal.model)
 	}
 	if(is.null(use.box.cox)) {
 		use.box.cox <- c(FALSE, TRUE)
