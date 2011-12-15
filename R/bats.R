@@ -118,44 +118,46 @@ bats <- function(y, use.box.cox=NULL, use.trend=NULL, use.damped.trend=NULL, sea
 
 print.bats <- function(x,...) {
 	cat("\n")
-	cat("BATS( {")
-	if(!is.null(x$lambda)) {
-		cat(x$lambda)
-	} else {
-		cat("1")
-	}
-	cat("}, {")
-	if(!is.null(x$ar.coefficients)) {
-		cat(length(x$ar.coefficients))
-	} else {
-		cat("0")
-	}
-	cat(", ")
-	if(!is.null(x$ma.coefficients)) {
-		cat(length(x$ma.coefficients))
-	} else {
-		cat("0")
-	}
-	cat("}, {")
-	if(!is.null(x$damping.parameter)) {
-		cat(x$damping.parameter)
-	} else {
-		cat("0")
-	}
-	
-	if(!is.null(x$seasonal.periods)) {
-		cat("}, { ")
-		for(i in x$seasonal.periods) {
-			cat(i)
-			if(i != x$seasonal.periods[length(x$seasonal.periods)]) {
-				cat(", ")
-			} else {
-				cat("})")
-			}
-		}
-	} else {
-		cat("})\n\n")	
-	}
+	cat(makeText(x))
+	cat("\n")
+#	cat("BATS( {")
+#	if(!is.null(x$lambda)) {
+#		cat(x$lambda)
+#	} else {
+#		cat("1")
+#	}
+#	cat("}, {")
+#	if(!is.null(x$ar.coefficients)) {
+#		cat(length(x$ar.coefficients))
+#	} else {
+#		cat("0")
+#	}
+#	cat(", ")
+#	if(!is.null(x$ma.coefficients)) {
+#		cat(length(x$ma.coefficients))
+#	} else {
+#		cat("0")
+#	}
+#	cat("}, {")
+#	if(!is.null(x$damping.parameter)) {
+#		cat(x$damping.parameter)
+#	} else {
+#		cat("0")
+#	}
+#	
+#	if(!is.null(x$seasonal.periods)) {
+#		cat("}, { ")
+#		for(i in x$seasonal.periods) {
+#			cat(i)
+#			if(i != x$seasonal.periods[length(x$seasonal.periods)]) {
+#				cat(", ")
+#			} else {
+#				cat("})")
+#			}
+#		}
+#	} else {
+#		cat("})\n\n")	
+#	}
 	cat("\nCall: ")
 	print(x$call)
 	cat("\nParameters:\n")
