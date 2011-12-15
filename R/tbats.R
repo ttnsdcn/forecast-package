@@ -77,6 +77,9 @@ tbats<-function(y, use.box.cox=NULL, use.trend=NULL, use.damped.trend=NULL, seas
 	
 	best.model<-fitSpecificTBATS(y, model.params[1], model.params[2], model.params[3], seasonal.periods, k.vector)
 	for(i in 1:length(seasonal.periods)) {
+		if(seasonal.periods[i] == 2) {
+			next
+		}
 		max.k<-floor(((seasonal.periods[i]-1)/2))
 		if(i != 1) {
 			current.k<-2
@@ -96,10 +99,10 @@ tbats<-function(y, use.box.cox=NULL, use.trend=NULL, use.damped.trend=NULL, seas
 				
 			}
 		}
-		#print("period")
-		#print(seasonal.periods[i])
-		#print("max.k")
-		#print(max.k)
+		print("period")
+		print(seasonal.periods[i])
+		print("max.k")
+		print(max.k)
 			
 			if(max.k == 1) {
 				next
@@ -111,11 +114,15 @@ tbats<-function(y, use.box.cox=NULL, use.trend=NULL, use.damped.trend=NULL, seas
 					#old.k<-k.vector[i]
 					#k.vector[i]<-k.vector[i]-1
 					new.model<-fitSpecificTBATS(y, model.params[1], model.params[2], model.params[3], seasonal.periods, k.vector)
+					print("6 or less")
+					print(k.vector)
+					print(i)
+					
 					if(new.model$AIC > best.model$AIC) {
 						#print("6 or less")
 						#print(k.vector)
 						#print(i)
-						k.vector[i]<-old.k
+						k.vector[i]<-k.vector[i]+1
 						break
 					} else {
 						if(k.vector[i] == 1) {
@@ -124,7 +131,7 @@ tbats<-function(y, use.box.cox=NULL, use.trend=NULL, use.damped.trend=NULL, seas
 							#print(i)
 							break
 						}
-						old.k<-k.vector[i]
+						#old.k<-k.vector[i]
 						k.vector[i]<-k.vector[i]-1
 						best.model<-new.model
 						#print("6 or less")

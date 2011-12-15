@@ -58,8 +58,13 @@ makeTBATSFMatrix<-function(alpha, beta=NULL, small.phi=NULL, seasonal.periods=NU
 		A<-matrix(0,tau,tau)
 		last.pos<-0
 		for(i in 1:length(k.vector)) {
-			C<-.Call("makeCIMatrix", k_s = as.integer(k.vector[i]), m_s = as.integer(seasonal.periods[i]), PACKAGE = "forecast")
+			if(seasonal.periods[i] != 2) {
+				C<-.Call("makeCIMatrix", k_s = as.integer(k.vector[i]), m_s = as.integer(seasonal.periods[i]), PACKAGE = "forecast")
+			} else {
+				C<-matrix(0,1,1)	
+			}
 			S<-.Call("makeSIMatrix", k_s = as.integer(k.vector[i]), m_s = as.integer(seasonal.periods[i]), PACKAGE = "forecast")
+			
 			#C<-matrix(0,k.vector[i],k.vector[i])
 			#for(j in 1:k.vector[i]) {
 			#	l<-round((2*pi*j/seasonal.periods[i]), digits=15)
@@ -73,7 +78,10 @@ makeTBATSFMatrix<-function(alpha, beta=NULL, small.phi=NULL, seasonal.periods=NU
 			#print(S)
 			Ai<-.Call("makeAIMatrix", C_s = C, S_s = S, k_s = as.integer(k.vector[i]), PACKAGE = "forecast")
 			A[(last.pos+1):(last.pos+(2*k.vector[i])), (last.pos+1):(last.pos+(2*k.vector[i]))]<-Ai
-			last.pos<-(2*k.vector[i])
+			last.pos<-last.pos+(2*k.vector[i])
+			
+				
+			
 		}
 		seasonal.row<-cbind(seasonal.row,A)
 		
