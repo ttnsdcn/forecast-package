@@ -6,11 +6,11 @@
 
 \arguments{
 \item{y}{The time series to be forecast. Can be \code{numeric}, \code{msts} or \code{ts}. Only univariate time series is supported.}
-\item{use.box.cox}{\code{TRUE/FALSE} indicates whether to use the Box-Cox transformation or not. If \code{NULL} then both are tired and the best fit is selected by AIC.}
-\item{use.trend}{\code{TRUE/FALSE} indicates whether to include a trend or not. If \code{NULL} then both are tired and the best fit is selected by AIC.}
-\item{use.damped.trend}{\code{TRUE/FALSE} indicates whether to include a damping parameter in the trend or not. If \code{NULL} then both are tired and the best fit is selected by AIC.}
+\item{use.box.cox}{\code{TRUE/FALSE} indicates whether to use the Box-Cox transformation or not. If \code{NULL} then both are tried and the best fit is selected by AIC.}
+\item{use.trend}{\code{TRUE/FALSE} indicates whether to include a trend or not. If \code{NULL} then both are tried and the best fit is selected by AIC.}
+\item{use.damped.trend}{\code{TRUE/FALSE} indicates whether to include a damping parameter in the trend or not. If \code{NULL} then both are tried and the best fit is selected by AIC.}
 \item{seasonal.periods}{If \code{y} is a numeric then seasonal periods can be specified with this parameter.}
-\item{use.arma.errors}{\code{TRUE/FALSE} indicates whether to include ARMA errors or not. If \code{NULL} then both are tired and the best fit is selected by AIC.}
+\item{use.arma.errors}{\code{TRUE/FALSE} indicates whether to include ARMA errors or not. If \code{NULL} then both are tried and the best fit is selected by AIC.}
 \item{...}{Additional parameters to be passed to \code{auto.arima} when choose an ARMA(p, q) model for the errors.}
 }
 
@@ -21,13 +21,13 @@
 The generic accessor functions \code{fitted.values} and \code{residuals} extract useful features of
 the value returned by \code{ets} and associated functions.}
 
-\references{De Livera, A.M., Hyndman, R.J., & Snyder, R. D. (2010), Forecasting time series with complex seasonal patterns using exponential smoothing, Journal of the American Statistical Association, to appear. 
+\references{De Livera, A.M., Hyndman, R.J., & Snyder, R. D. (2012), Forecasting time series with complex seasonal patterns using exponential smoothing, Journal of the American Statistical Association, to appear. 
 }
 
 \author{Rob J Hyndman and Slava Razbash}
 
 \examples{
-fit<-tbats(air.passengers)
+fit <- tbats(USAccDeaths)
 plot(forecast(fit))
 \dontrun{
 taylor.fit<-tbats(taylor)

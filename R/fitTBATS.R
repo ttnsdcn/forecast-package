@@ -3,7 +3,7 @@
 # Author: srazbash
 ###############################################################################
 fitSpecificTBATS<-function(y, use.box.cox, use.beta, use.damping, seasonal.periods=NULL, k.vector=NULL, starting.params=NULL, x.nought=NULL, ar.coefs=NULL, ma.coefs=NULL) {
-	print(k.vector)
+	#print(k.vector)
 	if(!is.null(seasonal.periods)) {
 		seasonal.periods<-as.integer(sort(seasonal.periods))
 	}
@@ -214,7 +214,7 @@ fitSpecificTBATS<-function(y, use.box.cox, use.beta, use.damping, seasonal.perio
 			w.tilda.transpose<-w.tilda.transpose[,-c(start.cut:end.cut)]	
 			
 		}
-		print(w.tilda.transpose)
+		#print(w.tilda.transpose)
 		x.nought<-lm(t(y.tilda) ~ w.tilda.transpose - 1)$coefficients
 		x.nought<-matrix(x.nought, nrow=length(x.nought), ncol=1)
 		##Replace the AR() and MA() bits if they exist
@@ -224,7 +224,7 @@ fitSpecificTBATS<-function(y, use.box.cox, use.beta, use.damping, seasonal.perio
 			x.nought<-rbind(x.nought, arma.seed.states)
 		}
 #	}
-	print(x.nought)
+	#print(x.nought)
 	
 	#print("on1-A")
 	##Optimisation
