@@ -2,6 +2,7 @@ tbats <- function(y, use.box.cox=NULL, use.trend=NULL, use.damped.trend=NULL, se
 	if(any((y <= 0))) {
 		stop("TBATS requires positive data")
 	}
+	origy <- y
 	non.seasonal.model <- bats(as.numeric(y), use.box.cox=use.box.cox, use.trend=use.trend, use.damped.trend=use.damped.trend, use.arma.errors=use.arma.errors)
 	if(any(class(y) == "msts")) {
 		start.time <- start(y)
@@ -18,6 +19,7 @@ tbats <- function(y, use.box.cox=NULL, use.trend=NULL, use.damped.trend=NULL, se
 			return(best.model)
 		}
 	}
+	y <- as.numeric(y)
 	if(is.null(seasonal.periods)) {
 		return(not.seasonal.model)
 	}
@@ -238,7 +240,18 @@ tbats <- function(y, use.box.cox=NULL, use.trend=NULL, use.damped.trend=NULL, se
 	
 	
 	best.model$call <- match.call()
-	best.model$start.time <- start.time
+	#best.model$start.time <- start.time
+	# Add ts attributes
+	if(!any(class(origy) == "ts")) {
+		if(is.null(seasonal.periods)) {
+			origy <- ts(origy,s=1,f=1)
+		} else {
+			origy <- msts(origy,seasonal.periods)
+		}
+	}
+	attributes(best.model$fitted.values) <- attributes(best.model$errors) <- attributes(origy)
+	best.model$y <- origy
+	
 	return(best.model)
 }
 
@@ -252,7 +265,7 @@ filterTBATSSpecifics <- function(y, box.cox, trend, damping, seasonal.periods, k
 		##Turn off warnings
 		old.warning.level  <-  options()$warn
 		options(warn=-1)
-		arma <- try(auto.arima(as.numeric(first.model$e), d=0, ...), silent=TRUE)
+		arma <- try(auto.arima(as.numeric(first.model$errors), d=0, ...), silent=TRUE)
 		###Re-enable warnings
 		options(warn=old.warning.level)
 		if(class(arma) != "try-error") {

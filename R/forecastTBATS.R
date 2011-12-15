@@ -41,7 +41,7 @@ forecast.tbats <- function(object, h=10, level=c(80,95), fan=FALSE, ...) {
 	F <- makeTBATSFMatrix(alpha=object$alpha, beta=object$beta, small.phi=object$damping.parameter, seasonal.periods=object$seasonal.periods, k.vector=as.integer(object$k.vector), gamma.bold.matrix=gamma.bold, ar.coefs=object$ar.coefficients, ma.coefs=object$ma.coefficients)
 	
 	y.forecast[1] <- w$w.transpose %*% object$x[,ncol(object$x)]
-	x[,1] <-  F %*% object$x[,ncol(object$x)] + g %*% object$e[length(object$e)]
+	x[,1] <-  F %*% object$x[,ncol(object$x)] + g %*% object$errors[length(object$errors)]
 	
 	for(t in 2:h) {
 		x[,t] <- F %*% x[,(t-1)]
@@ -84,16 +84,18 @@ forecast.tbats <- function(object, h=10, level=c(80,95), fan=FALSE, ...) {
 		upper.bounds  <-  InvBoxCox(upper.bounds,object$lambda)
 	}
 	##Calc a start time for the forecast
-	y <- object$y
-	y[(length(y)+1)] <- 0
-	y <- ts(y, start=object$start.time, frequency=ts.frequency)
+	#y <- object$y
+	start.time <- start(object$y)
+	y <- ts(c(object$y,0), start=start.time, frequency=ts.frequency)
+	#y[(length(y)+1)] <- 0
+	#y <- ts(y, start=object$start.time, frequency=ts.frequency)
 	fcast.start.time <- end(y)
 	#Make msts object for x and mean
-	x <- msts(object$y, seasonal.periods=(if(!is.null(object$seasonal.periods)) { object$seasonal.periods} else { 1}), ts.frequency=ts.frequency, start=object$start.time)
-	fitted.values <- msts(object$fitted.values, seasonal.periods=(if(!is.null(object$seasonal.periods)) { object$seasonal.periods} else { 1}), start=object$start.time)
+	x <- msts(object$y, seasonal.periods=(if(!is.null(object$seasonal.periods)) { object$seasonal.periods} else { 1}), ts.frequency=ts.frequency, start=start.time)
+	fitted.values <- msts(object$fitted.values, seasonal.periods=(if(!is.null(object$seasonal.periods)) { object$seasonal.periods} else { 1}), start=start.time)
 	y.forecast <- msts(y.forecast, seasonal.periods=(if(!is.null(object$seasonal.periods)) { object$seasonal.periods} else { 1}), start=fcast.start.time)
 		
-	forecast.object <- list(model=object, mean=y.forecast, level=level, x=x, upper=upper.bounds, lower=lower.bounds, fitted=fitted.values, method=makeTextTBATS(object), residuals=object$e)
+	forecast.object <- list(model=object, mean=y.forecast, level=level, x=x, upper=upper.bounds, lower=lower.bounds, fitted=fitted.values, method=makeTextTBATS(object), residuals=object$errors)
 	class(forecast.object) <- "forecast"
 	return(forecast.object)
 }

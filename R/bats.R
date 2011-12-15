@@ -187,3 +187,6 @@ print.bats <- function(x,...) {
 	cat("\n\n")
 	
 }
+residuals.bats <- function(object, ...) {
+	object$errors
+}
