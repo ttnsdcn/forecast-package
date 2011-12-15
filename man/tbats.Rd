@@ -14,7 +14,7 @@
 \item{...}{Additional parameters to be passed to \code{auto.arima} when choose an ARMA(p, q) model for the errors.}
 }
 
-\description{Fits a BATS model applied to \code{y}.}
+\description{Fits a TBATS model applied to \code{y}.}
 
 \value{An object with class \code{c("tbats", "bats")}.
 
