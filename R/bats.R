@@ -1,5 +1,3 @@
-# TODO: Add comment
-# 
 # Author: srazbash
 ###############################################################################
 #setwd("/Volumes/NO\ NAME/SlavaBATS/")
@@ -31,7 +29,7 @@ filterSpecifics<-function(y, box.cox, trend, damping, seasonal.periods, use.arma
 		##Turn off warnings
 		old.warning.level <- options()$warn
 		options(warn=-1)
-		arma <- auto.arima(as.numeric(first.model$e), d=0, ...)
+		arma <- auto.arima(as.numeric(first.model$errors), d=0, ...)
 		###Re-enable warnings
 		options(warn=old.warning.level)
 		p <- arma$arma[1]
@@ -68,18 +66,13 @@ bats <- function(y, use.box.cox=NULL, use.trend=NULL, use.damped.trend=NULL, sea
 	if(any((y <= 0))) {
 		stop("BATS requires positive data")
 	}
+  origy <- y
 	if(any(class(y) == "msts")) {
-		start.time <- start(y)
 		seasonal.periods <- attr(y,"msts")
-		y <- as.numeric(y)
 	} else if(class(y) == "ts") {
-		start.time <- start(y)
 		seasonal.periods <- frequency(y)
-		y <- as.numeric(y)
-	}  else {
-		start.time <- 1
-		y <- as.numeric(y)
 	}
+  y <- as.numeric(y)
 	best.aic <- NULL
 	if(is.null(use.box.cox)) {
 		use.box.cox <- c(FALSE, TRUE)
@@ -109,10 +102,21 @@ bats <- function(y, use.box.cox=NULL, use.trend=NULL, use.damped.trend=NULL, sea
 		}
 	}
 	best.model$call <- match.call()
-	best.model$start.time <- start.time
 	if(best.model$optim.return.code != 0) {
 		warning("optim() did not converge.")
 	}
+  
+  # Add ts attributes
+  if(!any(class(origy) == "ts"))
+  {
+    if(is.null(seasonal.periods))
+      origy <- ts(origy,s=1,f=1)
+    else 
+      origy <- msts(origy,seasonal.periods)
+  }
+  attributes(best.model$fitted.values) <- attributes(best.model$errors) <- attributes(origy)
+  best.model$y <- origy
+  
 	return(best.model)
 }
 
@@ -190,3 +194,4 @@ print.bats <- function(x,...) {
 residuals.bats <- function(object, ...) {
 	object$errors
 }
+

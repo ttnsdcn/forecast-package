@@ -17,7 +17,7 @@
 
 \description{Fits a BATS model applied to \code{y}.}
 
-\value{An object of class "\code{ets}".
+\value{An object of class "\code{bats}".
 
 The generic accessor functions \code{fitted.values} and \code{residuals} extract useful features of
 the value returned by \code{ets} and associated functions.}
