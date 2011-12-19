@@ -1,4 +1,4 @@
-tbats <- function(y, use.box.cox=NULL, use.trend=NULL, use.damped.trend=NULL, seasonal.periods=NULL, use.arma.errors=TRUE, ...) {
+tbats <- function(y, use.box.cox=NULL, use.trend=NULL, use.damped.trend=NULL, seasonal.periods=NULL, use.arma.errors=TRUE, use.parallel=TRUE, num.cores=NULL, ...) {
 	if(any((y <= 0))) {
 		stop("TBATS requires positive data")
 	}
@@ -221,23 +221,57 @@ tbats <- function(y, use.box.cox=NULL, use.trend=NULL, use.damped.trend=NULL, se
 		#return(non.seasonal.model)
 		best.model <- non.seasonal.model
 	}
-	#print(best.model)
-	for(box.cox in use.box.cox) {
-		for(trend in use.trend) {
-			for(damping in use.damped.trend) {
-				if(all((model.params == c(box.cox, trend, damping)))) {
-					new.model <- filterTBATSSpecifics(y, box.cox, trend, damping, seasonal.periods, k.vector, use.arma.errors, aux.model=aux.model, ...)
-				} else if(!((trend == FALSE) & (damping == TRUE))) {
-					new.model <- filterTBATSSpecifics(y, box.cox, trend, damping, seasonal.periods, k.vector, use.arma.errors, ...)
+	if(use.parallel) {
+		#Set up the control array
+		control.array<-NULL
+		for(box.cox in use.box.cox) {
+			for(trend in use.trend) {
+				for(damping in use.damped.trend) {
+					if((trend == FALSE) & (damping == TRUE)) {
+						next
+					}
+					control.line<-c(box.cox, trend, damping)
+					if(!is.null(control.array)) {
+						control.array<-rbind(control.array, control.line)
+					} else {
+						control.array<-control.line
+					}
 				}
-				if(new.model$AIC < best.model$AIC) {
-					best.model <- new.model	
-				}				
-				
+			}
+		}
+		##Fit the models
+		if(is.null(num.cores)) {
+			num.cores<-detectCores(all.tests = FALSE, logical = TRUE)
+		}
+		clus<-makeCluster(num.cores)
+		models.list<-clusterApplyLB(clus, c(1:nrow(control.array)), parFilterTBATSSpecifics, y=y, control.array=control.array, model.params=model.params, seasonal.periods=seasonal.periods, k.vector=k.vector, use.arma.errors=use.arma.errors, aux.model=aux.model)
+		stopCluster(clus)
+		##Choose the best model
+		####Get the AICs
+		aics<-numeric(nrow(control.array))
+		for(i in 1:nrow(control.array)) {
+			aics[i]<-models.list[[i]]$AIC
+		}
+		best.number<-which.min(aics)
+		best.model<-models.list[[best.number]]
+		
+	} else {
+		for(box.cox in use.box.cox) {
+			for(trend in use.trend) {
+				for(damping in use.damped.trend) {
+					if(all((model.params == c(box.cox, trend, damping)))) {
+						new.model <- filterTBATSSpecifics(y, box.cox, trend, damping, seasonal.periods, k.vector, use.arma.errors, aux.model=aux.model, ...)
+					} else if(!((trend == FALSE) & (damping == TRUE))) {
+						new.model <- filterTBATSSpecifics(y, box.cox, trend, damping, seasonal.periods, k.vector, use.arma.errors, ...)
+					}
+					if(new.model$AIC < best.model$AIC) {
+						best.model <- new.model	
+					}				
+
+				}
 			}
 		}
 	}
-	
 	
 	best.model$call <- match.call()
 	#best.model$start.time <- start.time
@@ -254,6 +288,59 @@ tbats <- function(y, use.box.cox=NULL, use.trend=NULL, use.damped.trend=NULL, se
 	
 	return(best.model)
 }
+
+######################################################################################################################################
+parFilterTBATSSpecifics <- function(control.number, y, control.array, model.params, seasonal.periods, k.vector, use.arma.errors, aux.model=NULL, ...) {
+	box.cox <- control.array[control.number, 1]
+	trend <- control.array[control.number, 2]
+	damping <- control.array[control.number, 3]
+	if(!all((model.params == c(box.cox, trend, damping)))) {
+		first.model <- fitSpecificTBATS(y, use.box.cox=box.cox, use.beta=trend, use.damping=damping, seasonal.periods=seasonal.periods, k.vector=k.vector)
+	} else {
+		first.model <- aux.model
+	} 
+	
+	if(use.arma.errors) { 
+		##Turn off warnings
+		old.warning.level  <-  options()$warn
+		options(warn=-1)
+		arma <- try(auto.arima(as.numeric(first.model$errors), d=0, ...), silent=TRUE)
+		###Re-enable warnings
+		options(warn=old.warning.level)
+		if(class(arma) != "try-error") {
+			p <- arma$arma[1]
+			q <- arma$arma[2]
+			if((p != 0) | (q != 0)) { #Did auto.arima() find any AR() or MA() coefficients?
+				if(p != 0) {
+					ar.coefs <- numeric(p)
+				} else {
+					ar.coefs <- NULL
+				}
+				if(q != 0) {
+					ma.coefs <- numeric(q)
+				} else {
+					ma.coefs <- NULL
+				}
+				starting.params <- first.model$parameters
+				
+				second.model <- fitSpecificTBATS(y, use.box.cox=box.cox, use.beta=trend, use.damping=damping, seasonal.periods=seasonal.periods, k.vector=k.vector, ar.coefs=ar.coefs, ma.coefs=ma.coefs)
+				if(second.model$AIC < first.model$AIC) {
+					return(second.model)
+				} else {
+					return(first.model)
+				}
+			} else { #Else auto.arima() did not find any AR() or MA()coefficients
+				return(first.model)
+			}
+		} else {
+			return(first.model)
+		}
+	} else {
+		return(first.model)
+	}
+}
+
+#################################################################################################
 
 filterTBATSSpecifics <- function(y, box.cox, trend, damping, seasonal.periods, k.vector, use.arma.errors, aux.model=NULL, ...) {
 	if(is.null(aux.model)) {
