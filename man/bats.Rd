@@ -11,7 +11,7 @@
 \item{use.trend}{\code{TRUE/FALSE} indicates whether to include a trend or not. If \code{NULL} then both are tried and the best fit is selected by AIC.}
 \item{use.damped.trend}{\code{TRUE/FALSE} indicates whether to include a damping parameter in the trend or not. If \code{NULL} then both are tried and the best fit is selected by AIC.}
 \item{seasonal.periods}{If \code{y} is a numeric then seasonal periods can be specified with this parameter.}
-\item{use.arma.errors}{\code{TRUE/FALSE} indicates whether to include ARMA errors or not. If \code{NULL} then both are tried and the best fit is selected by AIC.}
+\item{use.arma.errors}{\code{TRUE/FALSE} indicates whether to include ARMA errors or not. If \code{TRUE} the best fit is selected by AIC. If \code{FALSE} then the selection algorithm does not consider ARMA errors.}
 \item{use.parallel}{\code{TRUE/FALSE} indicates whether or not to use parallel processing.}
 \item{num.cores}{The number of parallel processes to be used if using parallel processing. If \code{NULL} then the number of logical cores is detected.}
 \item{...}{Additional parameters to be passed to \code{auto.arima} when choose an ARMA(p, q) model for the errors.}

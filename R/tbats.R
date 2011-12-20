@@ -76,7 +76,15 @@ tbats <- function(y, use.box.cox=NULL, use.trend=NULL, use.damped.trend=NULL, se
 #		}
 #		previous.season <- previous.season+seasonal.periods[i]
 #	}
-	
+
+	#if(use.parallel) then make the cluster
+	if(use.parallel) {
+		if(is.null(num.cores)) {
+			num.cores <- detectCores(all.tests = FALSE, logical = TRUE)
+		}
+		clus <- makeCluster(num.cores)	
+	}
+
 	best.model <- fitSpecificTBATS(y, model.params[1], model.params[2], model.params[3], seasonal.periods, k.vector)
 	for(i in 1:length(seasonal.periods)) {
 		if(seasonal.periods[i] == 2) {
@@ -151,9 +159,20 @@ tbats <- function(y, use.box.cox=NULL, use.trend=NULL, use.damped.trend=NULL, se
 				step.down.k[i] <- 5
 				k.vector[i] <- 6
 				#Fit three different models
-				up.model <- fitSpecificTBATS(y, model.params[1], model.params[2], model.params[3], seasonal.periods, step.up.k)
-				level.model <- fitSpecificTBATS(y, model.params[1], model.params[2], model.params[3], seasonal.periods, k.vector)
-				down.model <- fitSpecificTBATS(y, model.params[1], model.params[2], model.params[3], seasonal.periods, step.down.k)
+				
+				###if(use.parallel) then do parallel
+				if(use.parallel) {
+					k.control.array<-rbind(step.up.k, step.down.k, k.vector)
+					#print(k.control.array)
+					models.list <- clusterApplyLB(clus, c(1:3), parFitSpecificTBATS, y=y, box.cox=model.params[1], trend = model.params[2], damping = model.params[3], seasonal.periods = seasonal.periods, k.control.matrix=k.control.array)
+					up.model <- models.list[[1]]
+					level.model <- models.list[[3]]
+					down.model <- models.list[[2]]
+				} else {
+					up.model <- fitSpecificTBATS(y, model.params[1], model.params[2], model.params[3], seasonal.periods, step.up.k)
+					level.model <- fitSpecificTBATS(y, model.params[1], model.params[2], model.params[3], seasonal.periods, k.vector)
+					down.model <- fitSpecificTBATS(y, model.params[1], model.params[2], model.params[3], seasonal.periods, step.down.k)
+				}
 				#Dcide the best model of the three and then follow that direction to find the optimal k
 				aic.vector <- c(up.model$AIC, level.model$AIC, down.model$AIC)
 				##If shifting down
@@ -162,7 +181,7 @@ tbats <- function(y, use.box.cox=NULL, use.trend=NULL, use.damped.trend=NULL, se
 					k.vector[i] <- 5
 					repeat{
 						k.vector[i] <- k.vector[i]-1
-						down.model <- fitSpecificTBATS(y, model.params[1], model.params[2], model.params[3], seasonal.periods, k.vector)
+						down.model <- fitSpecificTBATS(y, model.params[1], model.params[2], model.params[3], seasonal.periods, k.vector, use.arma.errors)
 						#print("stepping down")
 						#print(k.vector)
 						#print(i)
@@ -240,10 +259,10 @@ tbats <- function(y, use.box.cox=NULL, use.trend=NULL, use.damped.trend=NULL, se
 			}
 		}
 		##Fit the models
-		if(is.null(num.cores)) {
-			num.cores <- detectCores(all.tests = FALSE, logical = TRUE)
-		}
-		clus <- makeCluster(num.cores)
+		#if(is.null(num.cores)) {
+		#	num.cores <- detectCores(all.tests = FALSE, logical = TRUE)
+		#}
+		#clus <- makeCluster(num.cores)
 		models.list <- clusterApplyLB(clus, c(1:nrow(control.array)), parFilterTBATSSpecifics, y=y, control.array=control.array, model.params=model.params, seasonal.periods=seasonal.periods, k.vector=k.vector, use.arma.errors=use.arma.errors, aux.model=aux.model)
 		stopCluster(clus)
 		##Choose the best model
@@ -344,6 +363,10 @@ parFilterTBATSSpecifics <- function(control.number, y, control.array, model.para
 }
 
 #################################################################################################
+parFitSpecificTBATS <- function(control.number, y, box.cox, trend, damping, seasonal.periods, k.control.matrix) {
+	k.vector<-k.control.matrix[control.number,]
+	return(fitSpecificTBATS(y, box.cox, trend, damping, seasonal.periods, k.vector))
+} 
 
 filterTBATSSpecifics <- function(y, box.cox, trend, damping, seasonal.periods, k.vector, use.arma.errors, aux.model=NULL, ...) {
 	if(is.null(aux.model)) {
