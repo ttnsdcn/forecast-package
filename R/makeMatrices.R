@@ -59,11 +59,11 @@ makeTBATSFMatrix<-function(alpha, beta=NULL, small.phi=NULL, seasonal.periods=NU
 		last.pos<-0
 		for(i in 1:length(k.vector)) {
 			if(seasonal.periods[i] != 2) {
-				C<-.Call("makeCIMatrix", k_s = as.integer(k.vector[i]), m_s = as.integer(seasonal.periods[i]), PACKAGE = "forecast")
+				C<-.Call("makeCIMatrix", k_s = as.integer(k.vector[i]), m_s = as.double(seasonal.periods[i]), PACKAGE = "forecast")
 			} else {
 				C<-matrix(0,1,1)	
 			}
-			S<-.Call("makeSIMatrix", k_s = as.integer(k.vector[i]), m_s = as.integer(seasonal.periods[i]), PACKAGE = "forecast")
+			S<-.Call("makeSIMatrix", k_s = as.integer(k.vector[i]), m_s = as.double(seasonal.periods[i]), PACKAGE = "forecast")
 			
 			#C<-matrix(0,k.vector[i],k.vector[i])
 			#for(j in 1:k.vector[i]) {

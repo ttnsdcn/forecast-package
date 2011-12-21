@@ -2,7 +2,7 @@
 fitSpecificTBATS <- function(y, use.box.cox, use.beta, use.damping, seasonal.periods=NULL, k.vector=NULL, starting.params=NULL, x.nought=NULL, ar.coefs=NULL, ma.coefs=NULL) {
 	#print(k.vector)
 	if(!is.null(seasonal.periods)) {
-		seasonal.periods <- as.integer(sort(seasonal.periods))
+		seasonal.periods <- sort(seasonal.periods)
 	}
 	##Meaning/purpose of the first if() statement: If this is the first pass, then use default starting values. Else if it is the second pass, then use the values form the first pass as starting values.
 	if(is.null(starting.params)) {
