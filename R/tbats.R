@@ -8,21 +8,38 @@ tbats <- function(y, use.box.cox=NULL, use.trend=NULL, use.damped.trend=NULL, se
 		start.time <- start(y)
 		seasonal.periods <- attr(y,"msts")
 		y <- as.numeric(y)
+		if(all((seasonal.periods == 1))) {
+			seasonal.periods <- NULL
+		}
 	} else if(class(y) == "ts") {
 		start.time <- start(y)
-		seasonal.periods <- frequency(y)
+		if(frequency(y) == 1) {
+			seasonal.periods <- NULL
+		} else {
+			seasonal.periods <- frequency(y)
+		}
 		y <- as.numeric(y)
 	}  else {
 		start.time <- 1
 		y <- as.numeric(y)
-		if(is.null(seasonal.periods)) {
-			return(best.model)
-		}
 	}
 	y <- as.numeric(y)
 	if(is.null(seasonal.periods)) {
+		non.seasonal.model$call <- match.call()
+		# Add ts attributes
+		if(!any(class(origy) == "ts")) {
+			if(is.null(seasonal.periods)) {
+				origy <- ts(origy,s=1,f=1)
+			} else {
+				origy <- msts(origy,seasonal.periods)
+			}
+		}
+		attributes(non.seasonal.model$fitted.values) <- attributes(non.seasonal.model$errors) <- attributes(origy)
+		non.seasonal.model$y <- origy
 		return(non.seasonal.model)
 	}
+	seasonal.mask <- (seasonal.periods == 1)
+	seasonal.periods <- seasonal.periods[!seasonal.mask]
 	if(is.null(use.box.cox)) {
 		use.box.cox <- c(FALSE, TRUE)
 	} 
