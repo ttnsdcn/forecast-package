@@ -449,40 +449,51 @@ calcFTest <- function(r.sse, ur.sse, num.restrictions, num.u.params, num.observa
 
 
 print.tbats <- function(x, ...) {
-	cat("\n")
 	cat(makeTextTBATS(x))
 	cat("\n")
-	
 	cat("\nCall: ")
 	print(x$call)
-	cat("\nParameters:\n")
-	cat("\nBox-Cox Parameter: ")
-	cat(x$lambda)
-	cat("\nAlpha: ")
+	cat("\nParameters")
+  if(!is.null(x$lambda))
+  {
+    cat("\n  Lambda: ")
+    cat(round(x$lambda,6))
+  }
+	cat("\n  Alpha: ")
 	cat(x$alpha)
-	cat("\nBeta: ")
-	cat(x$beta)
-	cat("\nDamping Parameter: ")
-	cat(x$damping.parameter)
-	cat("\nGamma-1 Values: ")
-	cat(x$gamma.one.values)
-	cat("\nGamma-2 Values: ")
-	cat(x$gamma.two.values)
-	cat("\nK-vector: ")
-	cat(x$k.vector)
-	cat("\nAR() Coefficients: ")
-	cat(x$ar.coefficients)
-	cat("\nMA() Coefficients: ")
-	cat(x$ma.coefficients)
-	cat("\n\n")
+  if(!is.null(x$beta))
+  {
+    cat("\n  Beta: ")
+    cat(x$beta)
+    cat("\n  Damping Parameter: ")
+    cat(round(x$damping.parameter,6))
+  }
+  if(!is.null(x$gamma.one.values))
+  {
+    cat("\n  Gamma-1 Values: ")
+    cat(x$gamma.one.values)
+  }
+  if(!is.null(x$gamma.two.values))
+  {
+    cat("\n  Gamma-2 Values: ")
+    cat(x$gamma.two.values)
+  }
+  if(!is.null(x$ar.coefficients))
+  {
+    cat("\n  AR coefficients: ")
+    cat(round(x$ar.coefficients,6))
+  }
+  if(!is.null(x$ma.coefficients))
+  {
+    cat("\n  MA coefficients: ")
+    cat(round(x$ma.coefficients,6))
+  }
+	cat("\n")
 	cat("\nSeed States:\n")
 	print(x$seed.states)
-	
 	cat("\nSigma: ")
 	cat(sqrt(x$variance))
-	
-	cat("\n\nAIC: ")
+	cat("\nAIC: ")
 	cat(x$AIC)
-	cat("\n\n")
-	
+	cat("\n")	
 }

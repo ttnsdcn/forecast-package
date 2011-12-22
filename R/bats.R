@@ -211,75 +211,50 @@ bats <- function(y, use.box.cox=NULL, use.trend=NULL, use.damped.trend=NULL, sea
 }
 
 print.bats <- function(x,...) {
-	cat("\n")
 	cat(makeText(x))
 	cat("\n")
-#	cat("BATS( {")
-#	if(!is.null(x$lambda)) {
-#		cat(x$lambda)
-#	} else {
-#		cat("1")
-#	}
-#	cat("}, {")
-#	if(!is.null(x$ar.coefficients)) {
-#		cat(length(x$ar.coefficients))
-#	} else {
-#		cat("0")
-#	}
-#	cat(", ")
-#	if(!is.null(x$ma.coefficients)) {
-#		cat(length(x$ma.coefficients))
-#	} else {
-#		cat("0")
-#	}
-#	cat("}, {")
-#	if(!is.null(x$damping.parameter)) {
-#		cat(x$damping.parameter)
-#	} else {
-#		cat("0")
-#	}
-#	
-#	if(!is.null(x$seasonal.periods)) {
-#		cat("}, { ")
-#		for(i in x$seasonal.periods) {
-#			cat(i)
-#			if(i != x$seasonal.periods[length(x$seasonal.periods)]) {
-#				cat(", ")
-#			} else {
-#				cat("})")
-#			}
-#		}
-#	} else {
-#		cat("})\n\n")	
-#	}
 	cat("\nCall: ")
 	print(x$call)
-	cat("\nParameters:\n")
-	cat("\nBox-Cox Parameter: ")
-	cat(x$lambda)
-	cat("\nAlpha: ")
+	cat("\nParameters")
+  if(!is.null(x$lambda))
+  {
+    cat("\n  Lambda: ")
+    cat(round(x$lambda,6))
+  }
+	cat("\n  Alpha: ")
 	cat(x$alpha)
-	cat("\nBeta: ")
-	cat(x$beta)
-	cat("\nDamping Parameter: ")
-	cat(x$damping.parameter)
-	cat("\nGamma Values: ")
-	cat(x$gamma.values)
-	cat("\nAR() Coefficients: ")
-	cat(x$ar.coefficients)
-	cat("\nMA() Coefficients: ")
-	cat(x$ma.coefficients)
-	cat("\n\n")
+  if(!is.null(x$beta))
+  {
+    cat("\n  Beta: ")
+    cat(x$beta)
+    cat("\n  Damping Parameter: ")
+    cat(round(x$damping.parameter,6))
+	}
+  if(!is.null(x$gamma.values))
+   {
+    cat("\n  Gamma Values: ")
+    cat(x$gamma.values)
+  }
+  if(!is.null(x$ar.coefficients))
+  {
+    cat("\n  AR coefficients: ")
+    cat(round(x$ar.coefficients,6))
+	}
+  if(!is.null(x$ma.coefficients))
+  {
+    cat("\n  MA coefficients: ")
+    cat(round(x$ma.coefficients,6))
+  }
+	cat("\n")
 	cat("\nSeed States:\n")
 	print(x$seed.states)
 	
 	cat("\nSigma: ")
 	cat(sqrt(x$variance))
 	
-	cat("\n\nAIC: ")
+	cat("\nAIC: ")
 	cat(x$AIC)
-	cat("\n\n")
-	
+	cat("\n")	
 }
 residuals.bats <- function(object, ...) {
 	object$errors

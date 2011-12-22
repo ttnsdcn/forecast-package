@@ -89,43 +89,43 @@ forecast.bats <- function(object, h=10, level=c(80,95), fan=FALSE, ...)
 
 
 makeText <- function(object) {
-	name <- "BATS( {"
+	name <- "BATS("
 	if(!is.null(object$lambda)) {
-		name <- paste(name, round(object$lambda, digits=6), sep="")
+		name <- paste(name, round(object$lambda, digits=3), sep="")
 	} else {
 		name <- paste(name, "1", sep="")
 	}
-	name <- paste(name, "}, {", sep="")
+	name <- paste(name, ", {", sep="")
 	if(!is.null(object$ar.coefficients)) {
 		name <- paste(name, length(object$ar.coefficients), sep="")
 	} else {
 		name <- paste(name, "0", sep="")
 	}
-	name <- paste(name, ", ", sep="")
+	name <- paste(name, ",", sep="")
 	if(!is.null(object$ma.coefficients)) {
 		name <- paste(name, length(object$ma.coefficients), sep="")
 	} else {
 		name <- paste(name, "0", sep="")
 	}
-	name <- paste(name, "}, {", sep="")
+	name <- paste(name, "}, ", sep="")
 	if(!is.null(object$damping.parameter)) {
-		name <- paste(name, round(object$damping.parameter, digits=6), sep="")
+		name <- paste(name, round(object$damping.parameter, digits=3), sep="")
 	} else {
 		name <- paste(name, "-", sep="")
 	}
-	
+	name <- paste(name, ", ", sep="")
 	if(!is.null(object$seasonal.periods)) {
-		name <- paste(name, "}, {", sep="")
+    name <- paste(name,"{",sep="")
 		for(i in object$seasonal.periods) {
 			name <- paste(name, i, sep="")
 			if(i != object$seasonal.periods[length(object$seasonal.periods)]) {
-				name <- paste(name, ", ", sep="")
+				name <- paste(name, ",", sep="")
 			} else {
 				name <- paste(name, "})", sep="")
 			}
 		}
 	} else {
-		name <- paste(name, "})", sep="")	
+		name <- paste(name, "-)", sep="")	
 	}
 	return(name)
 }

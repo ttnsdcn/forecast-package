@@ -19,12 +19,10 @@
 
 \description{Fits a TBATS model applied to \code{y}, as described in De Livera, Hyndman & Snyder (2012). Parallel processing is used by default to speed up the computatons.}
 
-\value{An object with class \code{c("tbats", "bats")}.
+\value{An object with class \code{c("tbats", "bats")}. The generic accessor functions \code{fitted.values} and \code{residuals} extract useful features of
+the value returned by \code{bats} and associated functions.}
 
-The generic accessor functions \code{fitted.values} and \code{residuals} extract useful features of
-the value returned by \code{ets} and associated functions.}
-
-\references{De Livera, A.M., Hyndman, R.J., & Snyder, R. D. (2012), Forecasting time series with complex seasonal patterns using exponential smoothing, Journal of the American Statistical Association, to appear. 
+\references{De Livera, A.M., Hyndman, R.J., & Snyder, R. D. (2012), Forecasting time series with complex seasonal patterns using exponential smoothing, \emph{Journal of the American Statistical Association}, to appear. 
 }
 
 \author{Slava Razbash and Rob J Hyndman}
