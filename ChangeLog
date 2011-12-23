@@ -1,3 +1,7 @@
+Version 3.16 (23 December 2011)
+  * Corrected problem with AIC computation in bats and tbats
+  * Fixed handlng of non-seasonal data in bats()
+
 Version 3.15 (22 December 2011)
   * New functions tbats() and forecast.tbats() for multiple seasonal time series modelling.
   * bats() and tbats() use parallel processing when possible.
