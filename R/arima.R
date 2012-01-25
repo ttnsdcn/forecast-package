@@ -1,7 +1,7 @@
 search.arima <- function(x, d=NA, D=NA, max.p=5, max.q=5,
     max.P=2, max.Q=2, max.order=5, stationary=FALSE, ic=c("aic","aicc","bic"),
     trace=FALSE,approximation=FALSE,xreg=NULL,offset=offset,allowdrift=TRUE,
-    parallel=FALSE, use.snow=TRUE)
+    parallel=FALSE, use.snow=TRUE, num.cores=NULL)
 {
     #dataname <- substitute(x)
     ic <- match.arg(ic)
@@ -52,11 +52,15 @@ search.arima <- function(x, d=NA, D=NA, max.p=5, max.q=5,
     if (parallel==TRUE){
       #library(parallel)
 
-    if (max.p > 99) stop("max.p must be less than 100") else
-    if (max.q > 99) stop("max.q must be less than 100") else
-    if (max.P > 99) stop("max.P must be less than 100") else
-    if (max.Q > 99) stop("max.Q must be less than 100") else
+    #if (max.p > 99) stop("max.p must be less than 100") else
+    #if (max.q > 99) stop("max.q must be less than 100") else
+    #if (max.P > 99) stop("max.P must be less than 100") else
+    #if (max.Q > 99) stop("max.Q must be less than 100") else
+		if(any(c(max.p, max.q) <= floor(length(x)/3)) | any(c(max.P, max.Q) <= floor((length(x)/3)/(frequency(x))))) {
             to.check <- WhichModels(max.p, max.q, max.P, max.Q, maxK)
+		} else {
+			stop("max.p, max.q must be <= floor(length(x)/3), max.P, max.Q must be <= floor((length(x)/3)/(length.of.the.seasonal.period)))")
+		}
 
             par.all.arima <- function(l){
                 .tmp <- UndoWhichModels(l)
@@ -69,13 +73,17 @@ search.arima <- function(x, d=NA, D=NA, max.p=5, max.q=5,
                     return(cbind(fit, K))
                 } else return(NULL)
             }
-
+			
+			if(is.null(num.cores)) {
+				num.cores <- detectCores()
+			}
+			
             # clusterApplyLB() for Windows, mclapply() for POSIX
             if (use.snow){
-                cl <- makeCluster(detectCores())
+                cl <- makeCluster(num.cores)
                 all.models <- clusterApplyLB(cl=cl, x=to.check, fun=par.all.arima)
                 stopCluster(cl=cl)
-            } else all.models <- mclapply(X=to.check, FUN=par.all.arima, mc.cores=detectCores())
+            } else all.models <- mclapply(X=to.check, FUN=par.all.arima, mc.cores=num.cores)
 
             # Removing null elements
             all.models <- all.models[!sapply(all.models, is.null)]

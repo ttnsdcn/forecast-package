@@ -7,10 +7,11 @@ auto.arima <- function(x, d=NA, D=NA, max.p=5, max.q=5,
     test=c("kpss","adf","pp"), seasonal.test=c("ocsb","ch"), 
     allowdrift=TRUE,lambda=NULL,
 #########################################################################
-        parallel=FALSE, use.snow=TRUE)
+        parallel=FALSE, use.snow=TRUE, num.cores=NULL)
 {
         if (stepwise==TRUE & parallel==TRUE){
-            stop("Not yet implemented")
+            warning("Parallel computer is only implemented when stepwise=FALSE, the model will be fit in serial.")
+			parallel <- FALSE
         }
 #########################################################################
     ic <- match.arg(ic)
@@ -85,7 +86,7 @@ auto.arima <- function(x, d=NA, D=NA, max.p=5, max.q=5,
 #########################################################################
     if(!stepwise)
     {
-              bestfit <- search.arima(x,d,D,max.p,max.q,max.P,max.Q,max.order,stationary,ic,trace,approximation,xreg=xreg,offset=offset,allowdrift=allowdrift,parallel=parallel, use.snow=use.snow)
+              bestfit <- search.arima(x,d,D,max.p,max.q,max.P,max.Q,max.order,stationary,ic,trace,approximation,xreg=xreg,offset=offset,allowdrift=allowdrift,parallel=parallel, use.snow=use.snow, num.cores=num.cores)
               bestfit$call <- match.call()
               bestfit$call$x <- data.frame(x=x)
             bestfit$lamba <- lambda
