@@ -24,6 +24,10 @@ auto.arima <- function(x, d=NA, D=NA, max.p=5, max.q=5,
         warning("I can't handle data with frequency less than 1. Seasonality will be ignored.")
         m <- 1
     }
+	max.p<-ifelse(max.p <= floor(length(x)/3), max.p, floor(length(x)/3))
+	max.q<-ifelse(max.q <= floor(length(x)/3), max.q, floor(length(x)/3))
+	max.P<-ifelse(max.P <= floor((length(x)/3)/m), max.P, floor((length(x)/3)/m))
+	max.Q<-ifelse(max.Q <= floor((length(x)/3)/m), max.Q, floor((length(x)/3)/m))
 
         orig.x <- x
         if(!is.null(lambda))

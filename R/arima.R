@@ -50,18 +50,9 @@ search.arima <- function(x, d=NA, D=NA, max.p=5, max.q=5,
 ################################################################################
     # Parallel
     if (parallel==TRUE){
-      #library(parallel)
 
-    #if (max.p > 99) stop("max.p must be less than 100") else
-    #if (max.q > 99) stop("max.q must be less than 100") else
-    #if (max.P > 99) stop("max.P must be less than 100") else
-    #if (max.Q > 99) stop("max.Q must be less than 100") else
-		if(all(c(max.p, max.q) <= floor(length(x)/3)) & all(c(max.P, max.Q) <= floor((length(x)/3)/(frequency(x))))) {
-            to.check <- WhichModels(max.p, max.q, max.P, max.Q, maxK)
-		} else {
-			stop("max.p, max.q must be <= floor(length(x)/3), max.P, max.Q must be <= floor((length(x)/3)/(length.of.the.seasonal.period)))")
-		}
-
+		to.check <- WhichModels(max.p, max.q, max.P, max.Q, maxK)
+		
             par.all.arima <- function(l){
                 .tmp <- UndoWhichModels(l)
                 i <- .tmp[1]; j <- .tmp[2]; I <- .tmp[3]; J <- .tmp[4]; K <- .tmp[5]==1
