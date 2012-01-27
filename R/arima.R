@@ -1,7 +1,7 @@
 search.arima <- function(x, d=NA, D=NA, max.p=5, max.q=5,
     max.P=2, max.Q=2, max.order=5, stationary=FALSE, ic=c("aic","aicc","bic"),
     trace=FALSE,approximation=FALSE,xreg=NULL,offset=offset,allowdrift=TRUE,
-    parallel=FALSE, use.snow=TRUE, num.cores=NULL)
+    parallel=FALSE, num.cores=NULL)
 {
     #dataname <- substitute(x)
     ic <- match.arg(ic)
@@ -70,7 +70,7 @@ search.arima <- function(x, d=NA, D=NA, max.p=5, max.q=5,
 			}
 			
             # clusterApplyLB() for Windows, mclapply() for POSIX
-            if (use.snow){
+            if (Sys.info()[1] == "Windows"){
                 cl <- makeCluster(num.cores)
                 all.models <- clusterApplyLB(cl=cl, x=to.check, fun=par.all.arima)
                 stopCluster(cl=cl)
