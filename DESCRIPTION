@@ -4,7 +4,7 @@ Description: Methods and tools for displaying and analysing
 	univariate time series forecasts including exponential smoothing 
 	via state space models and automatic ARIMA modelling.
 Version: 3.17
-Date: 2012-01-30
+Date: 2012-01-31
 Depends: R (>= 2.14.0), graphics, stats, parallel, tseries, fracdiff, zoo, Rcpp (>= 0.9.7), RcppArmadillo (>= 0.2.29)
 LinkingTo: Rcpp, RcppArmadillo
 LazyData: yes
