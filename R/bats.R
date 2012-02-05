@@ -207,7 +207,7 @@ bats <- function(y, use.box.cox=NULL, use.trend=NULL, use.damped.trend=NULL, sea
   if(!any(class(origy) == "ts"))
   {
     if(is.null(seasonal.periods))
-      origy <- ts(origy,s=1,f=1)
+      origy <- ts(origy,start=1,frequency=1)
     else 
       origy <- msts(origy,seasonal.periods)
   }
