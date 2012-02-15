@@ -3,7 +3,7 @@ tbats <- function(y, use.box.cox=NULL, use.trend=NULL, use.damped.trend=NULL, se
 		stop("TBATS requires positive data")
 	}
 	origy <- y
-	non.seasonal.model <- bats(as.numeric(y), use.box.cox=use.box.cox, use.trend=use.trend, use.damped.trend=use.damped.trend, use.arma.errors=use.arma.errors)
+	non.seasonal.model <- bats(as.numeric(y), use.box.cox=use.box.cox, use.trend=use.trend, use.damped.trend=use.damped.trend, use.arma.errors=use.arma.errors, use.parallel=use.parallel, num.cores=num.cores, ...)
 	if(any(class(y) == "msts")) {
 		start.time <- start(y)
 		seasonal.periods <- attr(y,"msts")
