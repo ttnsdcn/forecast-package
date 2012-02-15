@@ -1,7 +1,10 @@
-Version 3.18 (?? February 2012)
+Version 3.18 (15 February 2012)
   * Added method for plotting non-time-series forecasts to plot.forecast().
   * Removed partial arg matching.
   * Cleaned up some code, removing commented out sections, etc.
+  * Added robust option to stlf().
+  * Added naive and rwdrift options to stlf() and forecast.stl().
+  * Corrected Box-Cox initialization in bats() and tbats().
   
 Version 3.17 (2 February 2012)
   * Improved forecast.lm() so it is more likely to find the original data from an lm object.

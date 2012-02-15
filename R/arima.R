@@ -183,7 +183,7 @@ SeasDummy <- function(x)
 
 # CANOVA-HANSEN TEST
 # Largely based on uroot package code for CH.test()
-SD.test <- function (wts, start=frequency(wts))
+SD.test <- function (wts, s=frequency(wts))
 {
     if(any(is.na(wts)))
         stop("Series contains missing values. Please choose order of seasonal differencing manually.")
