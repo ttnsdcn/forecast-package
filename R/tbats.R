@@ -205,7 +205,7 @@ tbats <- function(y, use.box.cox=NULL, use.trend=NULL, use.damped.trend=NULL, se
 					k.vector[i] <- 5
 					repeat{
 						k.vector[i] <- k.vector[i]-1
-						down.model <- fitSpecificTBATS(y, model.params[1], model.params[2], model.params[3], seasonal.periods, k.vector, use.arma.errors, init.box.cox=init.box.cox)
+						down.model <- fitSpecificTBATS(y=y, use.box.cox=model.params[1], use.beta=model.params[2], use.damping=model.params[3], seasonal.periods=seasonal.periods, k.vector=k.vector, init.box.cox=init.box.cox)
 						#print("stepping down")
 						#print(k.vector)
 						#print(i)
@@ -219,11 +219,11 @@ tbats <- function(y, use.box.cox=NULL, use.trend=NULL, use.damped.trend=NULL, se
 							break
 						}
 					}
-					if(i == 1) {
-						prev.k <- c(1:k.vector[1])
-					} else {
-						prev.k <- c(prev.k, 1:k.vector[i])
-					}
+#					if(i == 1) {
+#						prev.k <- c(1:k.vector[1])
+#					} else {
+#						prev.k <- c(prev.k, 1:k.vector[i])
+#					}
 				##If staying level
 				} else if(min(aic.vector) == level.model$AIC) {
 					best.model <- level.model
