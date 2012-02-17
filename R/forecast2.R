@@ -318,7 +318,7 @@ croston2 <- function(x,h=10,alpha=0.1,nofits=FALSE)
         start.f <- length(x) + 1
         freq.x <- 1
     }
-    ratio <- ts(y.f$mean/p.f$mean,start=start.f, f = freq.x)
+    ratio <- ts(y.f$mean/p.f$mean,start=start.f, frequency = freq.x)
     if(nofits)
         return(ratio)
     else
