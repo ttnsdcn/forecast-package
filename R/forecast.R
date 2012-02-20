@@ -228,9 +228,11 @@ plot.forecast <- function(x, include, plot.conf=TRUE, shaded=TRUE, shadebars=(le
       ylim <- range(ylim,x$lower,x$upper,na.rm=TRUE)
   }
   npred <- length(pred.mean)
+  tsx <- is.ts(pred.mean)
+  if(!tsx)
+    pred.mean <- ts(pred.mean,start=nx+1,frequency=1)
   plot(ts(c(xxx[(nx-include+1):nx], rep(NA, npred)), end=tsp(xx)[2] + (nx-n)/freq + npred/freq, frequency=freq),
-    xlab=xlab,ylim=ylim,ylab=ylab,main=main,col=col,...)
-
+    xlab=xlab,ylim=ylim,ylab=ylab,main=main,col=col,type=ifelse(tsx,"l","p"), ...)
   if(plot.conf)
   {
     xxx <- tsp(pred.mean)[1] - 1/freq + (1:npred)/freq            
@@ -265,7 +267,7 @@ plot.forecast <- function(x, include, plot.conf=TRUE, shaded=TRUE, shadebars=(le
       }
     }
   }
-  if(npred > 1 & !shadebars)
+  if(npred > 1 & !shadebars & tsx)
     lines(pred.mean, lty=1,col=fcol)
   else
     points(pred.mean, col=fcol, pch=19)
