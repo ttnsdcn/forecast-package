@@ -11,7 +11,7 @@
 }
 
 \description{Returns range of summary measures of the forecast accuracy. If \code{x} is provided, the function measures out-of-sample forecast accuracy
-based on x-f. If \code{x} is not provided, the function produces in-sample accuracy measures of the one-step forecasts based on f["x"]-fitted(f).
+based on x-f. If \code{x} is not provided, the function produces in-sample accuracy measures of the forecasts based on f["x"]-fitted(f).
 All measures are defined and discussed in Hyndman and Koehler (2006).}
 \details{MASE calculation is scaled using MAE of in-sample naive forecasts for non-seasonal time series, in-sample seasonal naive forecasts for seasonal time series and in-sample mean forecasts for non-time series data.}
 
