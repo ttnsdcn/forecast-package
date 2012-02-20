@@ -145,13 +145,14 @@ summary.forecast <- function(object,...)
 plotlmforecast <- function(object, plot.conf, shaded, shadecols, col, fcol, pi.col, pi.lty, 
   xlim=NULL, ylim, main, ylab, xlab, ...)
 {
-  if(ncol(object$newdata) != 1)
+  xvar <- attributes(terms(object$model))$term.labels
+  if(length(xvar) > 1)
     stop("Forecast plot for regression models only available for a single predictor")
   if(is.null(xlim))
-    xlim <- range(object$newdata[,1],object$model$model[,attributes(object$model$term)$term.labels])
+    xlim <- range(object$newdata[,xvar],model.frame(object$model)[,xvar])
   if(is.null(ylim))
     ylim <- range(object$upper,object$lower,fitted(object$model)+residuals(object$model))
-  plot(object$model$terms,data=object$model$model,xlim=xlim,ylim=ylim,xlab=xlab,ylab=ylab,main=main,col=col,...)
+  plot(formula(object$model),data=model.frame(object$model),xlim=xlim,ylim=ylim,xlab=xlab,ylab=ylab,main=main,col=col,...)
   abline(object$model)
   nf <- length(object$mean)
   if(plot.conf)
@@ -165,13 +166,13 @@ plotlmforecast <- function(object, plot.conf, shaded, shadecols, col, fcol, pi.c
       for(j in 1:nint)
       {
         if(shaded)
-          lines(rep(object$newdata[i,1],2), c(object$lower[i,idx[j]],object$upper[i,idx[j]]), col=shadecols[j],lwd=6)
+          lines(rep(object$newdata[i,xvar],2), c(object$lower[i,idx[j]],object$upper[i,idx[j]]), col=shadecols[j],lwd=6)
         else
-          lines(rep(object$newdata[i,1],2), c(object$lower[i,idx[j]],object$upper[i,idx[j]]), col=pi.col, lty=pi.lty)
+          lines(rep(object$newdata[i,xvar],2), c(object$lower[i,idx[j]],object$upper[i,idx[j]]), col=pi.col, lty=pi.lty)
       }
     }
   }
-  points(object$newdata[,1],object$mean,pch=19,col=fcol)
+  points(object$newdata[,xvar],object$mean,pch=19,col=fcol)
 }
 
 plot.forecast <- function(x, include, plot.conf=TRUE, shaded=TRUE, shadebars=(length(x$mean)<5),
