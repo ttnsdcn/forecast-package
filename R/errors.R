@@ -73,6 +73,7 @@ accuracy <- function(f,x,test="all")
 {
     if(!missing(x))
         return(forecasterrors(f,x,test))
+    # Make sure x is an element of f when f is a fitted model rather than a forecast
     if(is.element("Arima",class(f)) & !is.element("x", names(f)))
         f$x <- eval(parse(text = f$series))
     else if(is.element("lm",class(f)))
@@ -80,7 +81,6 @@ accuracy <- function(f,x,test="all")
       responsevar <- as.character(formula(f$model))[2]
       f$x <- model.frame(f$model)[,responsevar]
     }
-    else if
     
     ff <- f$x
     fits <- fitted(f)    # Don't use f$resid as this may contain multiplicative errors.
