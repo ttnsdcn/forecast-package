@@ -148,6 +148,8 @@ plotlmforecast <- function(object, plot.conf, shaded, shadecols, col, fcol, pi.c
   xvar <- attributes(terms(object$model))$term.labels
   if(length(xvar) > 1)
     stop("Forecast plot for regression models only available for a single predictor")
+  else if(ncol(object$newdata)==1) # Make sure column has correct name
+    colnames(object$newdata) <- xvar
   if(is.null(xlim))
     xlim <- range(object$newdata[,xvar],model.frame(object$model)[,xvar])
   if(is.null(ylim))
@@ -176,7 +178,7 @@ plotlmforecast <- function(object, plot.conf, shaded, shadecols, col, fcol, pi.c
 }
 
 plot.forecast <- function(x, include, plot.conf=TRUE, shaded=TRUE, shadebars=(length(x$mean)<5),
-        shadecols=NULL, col=1, fcol=4, pi.col=1, pi.lty=2, ylim=NULL, main=NULL, ylab="",xlab="",...)
+        shadecols=NULL, col=1, fcol=4, pi.col=1, pi.lty=2, ylim=NULL, main=NULL, ylab="",xlab="", type="l", ...)
 {
   if(is.element("x",names(x))) # Assume stored as x
     data <- x$x
@@ -198,7 +200,7 @@ plot.forecast <- function(x, include, plot.conf=TRUE, shaded=TRUE, shadebars=(le
     x$lower <- as.matrix(x$lower)
   }
 
-  if(class(x$model)=="lm" & class(x$mean) != "ts") # Non time series linear model
+  if(is.element("lm",class(x$model)) & !is.element("ts",class(x$mean))) # Non time series linear model
   {
     plotlmforecast(x, plot.conf=plot.conf, shaded=shaded, shadecols=shadecols, col=col, fcol=fcol, pi.col=pi.col, pi.lty=pi.lty, 
       ylim=ylim, main=main, xlab=xlab, ylab=ylab, ...)
@@ -230,9 +232,12 @@ plot.forecast <- function(x, include, plot.conf=TRUE, shaded=TRUE, shadebars=(le
   npred <- length(pred.mean)
   tsx <- is.ts(pred.mean)
   if(!tsx)
+  {
     pred.mean <- ts(pred.mean,start=nx+1,frequency=1)
+    type <- "p"
+  }
   plot(ts(c(xxx[(nx-include+1):nx], rep(NA, npred)), end=tsp(xx)[2] + (nx-n)/freq + npred/freq, frequency=freq),
-    xlab=xlab,ylim=ylim,ylab=ylab,main=main,col=col,type=ifelse(tsx,"l","p"), ...)
+    xlab=xlab,ylim=ylim,ylab=ylab,main=main,col=col,type=type, ...)
   if(plot.conf)
   {
     xxx <- tsp(pred.mean)[1] - 1/freq + (1:npred)/freq            

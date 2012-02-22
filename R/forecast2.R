@@ -37,10 +37,10 @@ meanf <- function(x,h=10,level=c(80,95),fan=FALSE, lambda=NULL)
     lower <- ts(lower,start=tsp(x)[2]+1/freq,frequency=freq)
     upper <- ts(upper,start=tsp(x)[2]+1/freq,frequency=freq)
     fits <- ts(rep(NA,n))
+    tsp(fits) <- tsp(x)
     for(i in 2:n)
       fits[i] <- mean(x[1:(i-1)],na.rm=TRUE)
     res <- x - fits	
-    tsp(fits) <- tsp(res) <- tsp(x)
   }
   else
   {

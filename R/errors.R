@@ -10,7 +10,7 @@ forecasterrors <- function(f,x,test="all")
     responsevar <- as.character(formula(f$model))[2]
     x <- x[,responsevar]
     dx <- model.frame(f$model)[,responsevar]
-    }
+  }
   if(is.list(f))
   {
     if(is.element("x",names(f)))
@@ -73,8 +73,15 @@ accuracy <- function(f,x,test="all")
 {
     if(!missing(x))
         return(forecasterrors(f,x,test))
-    if(class(f)=="Arima" & !is.element("x", names(f)))
+    if(is.element("Arima",class(f)) & !is.element("x", names(f)))
         f$x <- eval(parse(text = f$series))
+    else if(is.element("lm",class(f)))
+    {
+      responsevar <- as.character(formula(f$model))[2]
+      f$x <- model.frame(f$model)[,responsevar]
+    }
+    else if
+    
     ff <- f$x
     fits <- fitted(f)    # Don't use f$resid as this may contain multiplicative errors.
     res <- ff-fits
